@@ -1,0 +1,3 @@
+python -m PyQt5.uic.pyuic -x QTGraphicInterfaces/MainInterface.ui -o QTGraphicInterfaces/MainInterface.py
+
+python -m PyQt5.uic.pyuic -x QTGraphicInterfaces/DynamicMainInterface.ui -o QTGraphicInterfaces/DynamicMainInterface.py
