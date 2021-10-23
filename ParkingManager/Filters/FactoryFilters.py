@@ -1,16 +1,16 @@
-from Filters.Filter import Filter
+from Filters.Filter import FilterTypes
 from QTGraphicInterfaces.DynamicMainInterface import Ui_MainWindow as Ui
-from Models.Image import Image as Im
+from Models.Picture import Picture as Pic
 from Filters.DrawZones import DrawZones as Dz
 
 
 class FactoryFilter:
     ui: Ui
-    image: Im
+    picture: Pic
 
-    def __init__(self, image, ui):
+    def __init__(self, picture, ui):
         self.ui = ui
-        self.image = image
+        self.picture = picture
 
     def create_filter(self, filter_id, row, col, widget_id):
         """
@@ -21,8 +21,8 @@ class FactoryFilter:
         :param widget_id:
         :return:
         """
-        if filter_id == Filter.DrawZones:
-            return Dz(self.image, self.ui, row, col, widget_id)
+        if filter_id == FilterTypes.DrawZones:
+            return Dz(self.picture.content, self.ui, row, col, widget_id)
         else:
-            raise
+            raise Exception('No se pudo crear el filtro solicitado porque no existe en la enumeración')
 

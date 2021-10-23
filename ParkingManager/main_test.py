@@ -2,8 +2,8 @@ from PyQt5 import QtWidgets
 from QTGraphicInterfaces.DynamicMainInterface import Ui_MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-from Models.Image import Image as Im
-from Filters.Filter import Filter
+from Models.Picture import Picture as Pic
+from Filters.Filter import FilterTypes, Filter
 from Filters.FactoryFilters import FactoryFilter as Ff
 
 import sys
@@ -11,8 +11,8 @@ import sys
 
 class MainWindow(QtWidgets.QMainWindow):
     # region Attributes
-    image = None
-    filters = []
+    picture = None
+    filters: Filter = []
 
     # endregion
 
@@ -29,8 +29,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.btn_color_lines.setDisabled(True)
         # Conexiones
         self.ui.btn_load_image.clicked.connect(self.open_image)
-        self.ui.btn_draw_zones.clicked.connect(lambda callback: self.create_filter(Filter.DrawZones))
-        self.ui.btn_color_lines.clicked.connect(lambda callback: self.create_filter(Filter.ColorLines))
+        self.ui.btn_draw_zones.clicked.connect(lambda callback: self.create_filter(FilterTypes.DrawZones))
+        self.ui.btn_color_lines.clicked.connect(lambda callback: self.create_filter(FilterTypes.ColorLines))
 
     def open_image(self):
         """
@@ -44,12 +44,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if file_name:
             self.ui.lbl_load_image.setText(file_name)
-            self.image = Im(file_name)
+            self.picture = Pic(file_name)
             # Asignaciones
             self.ui.btn_draw_zones.setDisabled(False)
             self.ui.btn_color_lines.setDisabled(False)
 
-    def create_filter(self, filter_id: Filter):
+    def create_filter(self, filter_id: FilterTypes):
         """
         Retorna una instancia de filtro nueva según se indique como parámetro.
         :param filter_id:
@@ -59,7 +59,7 @@ class MainWindow(QtWidgets.QMainWindow):
         row = len(self.filters)
         col = 0
 
-        factory = Ff(self.image, self.ui)
+        factory = Ff(self.picture, self.ui)
         self.filters.append(factory.create_filter(filter_id, row, col, widget_id))
 
 
