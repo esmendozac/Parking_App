@@ -1,11 +1,12 @@
+import abc
 from enum import Enum
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractproperty
 
 
 class FilterTypes(Enum):
 
     DrawZones = 0
-    ColorLines = 1
+    Color = 1
 
 
 class Filter(ABC):
@@ -24,4 +25,8 @@ class Filter(ABC):
 
     @abstractmethod
     def draw_widget(self, row: int, col: int, widget_id: int):
+        pass
+
+    @abstractmethod
+    def clean(self):
         pass

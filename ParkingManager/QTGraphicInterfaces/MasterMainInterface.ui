@@ -185,6 +185,19 @@ border: 1px solid black;</string>
            <string>Eliminar</string>
           </property>
          </widget>
+         <widget class="QCheckBox" name="dz_cbx_executed">
+          <property name="geometry">
+           <rect>
+            <x>310</x>
+            <y>10</y>
+            <width>70</width>
+            <height>17</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Ejecutado</string>
+          </property>
+         </widget>
         </widget>
        </widget>
       </item>

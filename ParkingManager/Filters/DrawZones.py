@@ -2,29 +2,33 @@ import cv2
 import numpy as np
 import copy
 from QTGraphicInterfaces.MainInterface import Ui_Form as Ui
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 from Filters.Filter import Filter
+from Models.Picture import Picture as Pic
 
 
 class DrawZones(Filter):
     """
     Filtro que permite elegir específicamente zonas de una imagen para delimitar un estacionamiento
     """
-    # Coordenadas de limites útiles en la imagen
-    limits = [[]]
-    # Mascaras de limites
-    masks = []
-
-    picture = None
-    _original_picture = None
     ui: Ui
 
-    def __init__(self, picture, ui: Ui, row: int, col: int, widget_id: int):
+    def __init__(self, picture: Pic, ui: Ui, row: int, col: int, widget_id: int):
 
-        self.picture = picture
+        # Imagen original
+        self._original_picture = None
+        # Coordenadas de limites útiles en la imagen
+        self.limits = [[]]
+        # Mascaras de limites
+        self.masks = []
+        # Indica que el filtro fué finalizado
+        self.is_done = False
+
         self.set_original_picture(picture)
+        self.picture = self.get_original_picture()
         self.ui = ui
         self.draw_widget(row, col, widget_id)
+        self.widget_id = widget_id
 
     def draw_widget(self, row: int, col: int, widget_id: int):
         """
@@ -78,6 +82,11 @@ class DrawZones(Filter):
         dz_btn_delete.setGeometry(QtCore.QRect(150, 50, 81, 23))
         dz_btn_delete.setObjectName(f'dz_btn_delete_{widget_id}')
 
+        setattr(self.ui, f'dz_cbx_executed_{widget_id}', QtWidgets.QCheckBox(dz_grb_draw_zones))
+        dz_cbx_executed = getattr(self.ui, f'dz_cbx_executed_{widget_id}')
+        dz_cbx_executed.setGeometry(QtCore.QRect(310, 10, 70, 17))
+        dz_cbx_executed.setObjectName(f'dz_cbx_executed_{widget_id}')
+
         self.ui.gridLayout.addWidget(frame, row, col, 1, 1)
 
         _translate = QtCore.QCoreApplication.translate
@@ -87,21 +96,27 @@ class DrawZones(Filter):
         dz_btn_clean.setText(_translate("MainWindow", "Limpiar"))
         dz_btn_view_zone.setText(_translate("MainWindow", "Ver"))
         dz_btn_delete.setText(_translate("MainWindow", "Eliminar"))
+        dz_cbx_executed.setText(_translate("MainWindow", "Ejecutado"))
 
         # Conexiones
-        dz_btn_draw_zone.clicked.connect(self.load_image)
+        dz_btn_draw_zone.clicked.connect(self.draw_zone)
         dz_btn_view_zone.clicked.connect(self.view_zones)
-        dz_btn_clean.clicked.connect(self.clean_zones)
+        dz_btn_clean.clicked.connect(self.clean)
 
-    def load_image(self):
+        # Valores iniciales
+        dz_cbx_executed.setDisabled(True)
+
+        self.set_ext_btn_state(False)
+
+    def draw_zone(self):
         """
         Carga imagen del sistema de archivos
         :return:
         """
         try:
-            cv2.imshow('Dibujando imagen...', self.picture)
+            cv2.imshow(f'{self.widget_id}_Dibujando imagen...', self.picture)
             # Callback de eventos de mouse
-            cv2.setMouseCallback('Dibujando imagen...', self.draw_points_callback)
+            cv2.setMouseCallback(f'{self.widget_id}_Dibujando imagen...', self.draw_points_callback)
         except Exception as ex:
             raise Exception(ex)
 
@@ -120,7 +135,7 @@ class DrawZones(Filter):
             self.add_limit_coordinate(x, y, is_last=False)
             cv2.circle(self.picture, (x, y), 3, (0, 255, 0), -1)
             # Actualiza la imagen mostrada
-            cv2.imshow('Dibujando imagen...', self.picture)
+            cv2.imshow(f'{self.widget_id}_Dibujando imagen...', self.picture)
 
         # control + click añade una nueva zona delimitada
         elif event == cv2.EVENT_MBUTTONDBLCLK:
@@ -137,27 +152,35 @@ class DrawZones(Filter):
                 mask = cv2.drawContours(mask, contours, -1, 255, -1)
                 # Almacena la mascara en la imagen
                 self.masks.append(mask)
+
+                print(len(self.masks))
+
                 # Dibuja el contorno en la imagen original
                 cv2.drawContours(self.picture, contours, -1, (0, 255, 0), 2)
                 # Muestra el contorno
-                cv2.imshow('Dibujando imagen...', self.picture)
+                cv2.imshow(f'{self.widget_id}_Dibujando imagen...', self.picture)
     
     def view_zones(self):
         """
         Visualiza el resultado del filtro
         :return:
         """
-        cv2.imshow('Zonas delimitadas', self.get_picture_filtered())
+        cv2.imshow(f'{self.widget_id}_Zonas delimitadas', self.get_picture_filtered().content)
 
-    def clean_zones(self):
+        # Bloquea edición del filtro
+        getattr(self.ui, f'dz_btn_draw_zone_{self.widget_id}').setDisabled(True)
+        getattr(self.ui, f'dz_cbx_executed_{self.widget_id}').setCheckState(QtCore.Qt.Checked)
+        self.is_done = True
+        self.set_ext_btn_state(True)
+
+    def clean(self):
         """
         Limpieza de las zonas en el objeto imagen y en la interfaz gráfica
         :return:
         """
-        # # Limpieza interna de la imagen
-        # self.picture.clean_zones()
-        # Visualiza imagen de nuevo
-        cv2.imshow('Dibujando imagen...', self.get_original_picture())
+        self.limits = [[]]
+        self.masks = []
+        self.picture = self.get_original_picture()
 
     def add_limit_coordinate(self, x, y, is_last):
 
@@ -204,11 +227,32 @@ class DrawZones(Filter):
         """
         mask = self.get_all_masks_limits()
 
+        picture = Pic()
+        picture.create_picture_from_content(cv2.bitwise_and(self.get_original_picture(), self.get_original_picture(),
+                                                            mask=mask))
+
         # Genera la capa filtrada con la mascara adecuada
-        return cv2.bitwise_and(self.get_original_picture(), self.get_original_picture(), mask=mask)
+        return picture
 
     def set_original_picture(self, picture):
         self._original_picture = copy.deepcopy(picture)
 
     def get_original_picture(self):
         return copy.deepcopy(self._original_picture)
+
+    def empty_callback(self):
+        """
+        Función vacía para inhabilitar el callback
+        :param self:
+        :return:
+        """
+        pass
+
+    def set_ext_btn_state(self, state: bool):
+        """
+        Permite configurar el estado de los botones que crean filtros (Lógica normal)
+        :param state:
+        :return:
+        """
+        self.ui.btn_draw_zones.setDisabled(not state)
+        self.ui.btn_color_lines.setDisabled(not state)

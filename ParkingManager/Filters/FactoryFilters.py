@@ -2,6 +2,7 @@ from Filters.Filter import FilterTypes
 from QTGraphicInterfaces.DynamicMainInterface import Ui_MainWindow as Ui
 from Models.Picture import Picture as Pic
 from Filters.DrawZones import DrawZones as Dz
+from Filters.Color import Color as Col
 
 
 class FactoryFilter:
@@ -23,6 +24,8 @@ class FactoryFilter:
         """
         if filter_id == FilterTypes.DrawZones:
             return Dz(self.picture.content, self.ui, row, col, widget_id)
+        elif filter_id == FilterTypes.Color:
+            return Col(self.picture.content, self.ui, row, col, widget_id)
         else:
             raise Exception('No se pudo crear el filtro solicitado porque no existe en la enumeración')
 
