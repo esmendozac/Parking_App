@@ -13,7 +13,7 @@ class DrawZones(Filter):
     """
     ui: Ui
 
-    def __init__(self, picture: Pic, ui: Ui, row: int, col: int, widget_id: int):
+    def __init__(self, picture: Pic, ui: Ui, row: int, col: int, widget_id: int, color_selected=None):
 
         # Imagen original
         self._original_picture = None
@@ -23,6 +23,13 @@ class DrawZones(Filter):
         self.masks = []
         # Indica que el filtro fué finalizado
         self.is_done = False
+        # Hereda el color de linea de un filtro anterior
+        self.color = {'r': 255, 'g': 255, 'b': 255}
+
+        if color_selected is not None:
+            self.color = color_selected
+
+        print(self.color)
 
         self.set_original_picture(picture)
         self.picture = self.get_original_picture()
@@ -62,8 +69,8 @@ class DrawZones(Filter):
         dz_lbl_draw_zone = getattr(self.ui, f'dz_lbl_draw_zone_{widget_id}')
         dz_lbl_draw_zone.setGeometry(QtCore.QRect(10, 20, 16, 21))
         dz_lbl_draw_zone.setAutoFillBackground(False)
-        dz_lbl_draw_zone.setStyleSheet("background: rgb(0, 255, 0);\n"
-                                                "border: 1px solid black;")
+        dz_lbl_draw_zone.setStyleSheet(f"background: rgb({self.color['r']}, {self.color['g']}, "
+                                       f"{self.color['b']});\n""border: 1px solid black;")
         dz_lbl_draw_zone.setText("")
         dz_lbl_draw_zone.setObjectName(f'dz_lbl_draw_zone_{widget_id}')
 
@@ -133,7 +140,7 @@ class DrawZones(Filter):
         if event == cv2.EVENT_LBUTTONDOWN:
             # Cada punto dibujado es una coordenada almacenada y dibujada
             self.add_limit_coordinate(x, y, is_last=False)
-            cv2.circle(self.picture, (x, y), 3, (0, 255, 0), -1)
+            cv2.circle(self.picture, (x, y), 3, (int(self.color['r']), int(self.color['g']), int(self.color['b'])), -1)
             # Actualiza la imagen mostrada
             cv2.imshow(f'{self.widget_id}_Dibujando imagen...', self.picture)
 
@@ -153,13 +160,12 @@ class DrawZones(Filter):
                 # Almacena la mascara en la imagen
                 self.masks.append(mask)
 
-                print(len(self.masks))
-
                 # Dibuja el contorno en la imagen original
-                cv2.drawContours(self.picture, contours, -1, (0, 255, 0), 2)
+                cv2.drawContours(self.picture, contours, -1,
+                                 (int(self.color['r']), int(self.color['g']), int(self.color['b'])), 2)
                 # Muestra el contorno
                 cv2.imshow(f'{self.widget_id}_Dibujando imagen...', self.picture)
-    
+
     def view_zones(self):
         """
         Visualiza el resultado del filtro
@@ -228,8 +234,15 @@ class DrawZones(Filter):
         mask = self.get_all_masks_limits()
 
         picture = Pic()
-        picture.create_picture_from_content(cv2.bitwise_and(self.get_original_picture(), self.get_original_picture(),
-                                                            mask=mask))
+        image_with_contours = cv2.bitwise_and(self.get_original_picture(), self.get_original_picture(), mask=mask)
+
+        for limit in filter(lambda c: len(c) > 0, self.limits):
+            contours = np.array([limit])
+            # Dibuja el contorno en la imagen original
+            cv2.drawContours(image_with_contours, contours, -1,
+                             (int(self.color['r']), int(self.color['g']), int(self.color['b'])), 2)
+
+        picture.create_picture_from_content(image_with_contours)
 
         # Genera la capa filtrada con la mascara adecuada
         return picture

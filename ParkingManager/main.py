@@ -25,12 +25,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         # Asignaciones iniciales
-        self.ui.btn_draw_zones.setDisabled(True)
-        self.ui.btn_color_lines.setDisabled(True)
+        self.disable_all_buttons(True)
+
         # Conexiones
         self.ui.btn_load_image.clicked.connect(self.open_image)
-        self.ui.btn_draw_zones.clicked.connect(lambda callback: self.create_filter(FilterTypes.DrawZones))
-        self.ui.btn_color_lines.clicked.connect(lambda callback: self.create_filter(FilterTypes.Color))
+        self.ui.btn_delimite.clicked.connect(lambda callback: self.create_filter(FilterTypes.DelimiteArea))
+        self.ui.btn_transformation.clicked.connect(lambda callback: self.create_filter(FilterTypes.Transformation))
+        # self.ui.btn_color_lines.clicked.connect(lambda callback: self.create_filter(FilterTypes.Color))
+        # self.ui.btn_color_space.clicked.connect(lambda callback: self.create_filter(FilterTypes.ColorSpace))
+        # self.ui.btn_delimite_area.clicked.connect(lambda callback: self.create_filter(FilterTypes.DelimiteArea))
 
     def open_image(self):
         """
@@ -47,8 +50,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.picture = Pic()
             self.picture.create_picture_from_path(file_name)
             # Asignaciones
-            self.ui.btn_draw_zones.setDisabled(False)
-            self.ui.btn_color_lines.setDisabled(False)
+            self.disable_all_buttons(False)
 
     def create_filter(self, filter_id: FilterTypes):
         """
@@ -60,13 +62,27 @@ class MainWindow(QtWidgets.QMainWindow):
         row = len(self.filters)
         col = 0
 
+        last_filter = None
+
         if len(self.filters) == 0:
             factory = Ff(self.picture, self.ui)
         else:
             last_filter = self.filters[-1]
             factory = Ff(last_filter.get_picture_filtered(), self.ui)
 
-        self.filters.append(factory.create_filter(filter_id, row, col, widget_id))
+        self.filters.append(factory.create_filter(filter_id, row, col, widget_id, last_filter))
+
+    def disable_all_buttons(self, state: bool):
+        """
+        Habilita o deshabilita todos los botones
+        :param state:
+        :return:
+        """
+        self.ui.btn_delimite.setDisabled(state)
+        self.ui.btn_color.setDisabled(state)
+        self.ui.btn_transformation.setDisabled(state)
+        self.ui.btn_search.setDisabled(state)
+        self.ui.btn_contours.setDisabled(state)
 
 
 app = QtWidgets.QApplication([])

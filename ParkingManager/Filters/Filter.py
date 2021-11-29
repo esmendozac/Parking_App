@@ -7,6 +7,9 @@ class FilterTypes(Enum):
 
     DrawZones = 0
     Color = 1
+    ColorSpace = 2,
+    DelimiteArea = 3,
+    Transformation = 4
 
 
 class Filter(ABC):

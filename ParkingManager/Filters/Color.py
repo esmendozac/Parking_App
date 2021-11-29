@@ -15,6 +15,8 @@ class Color(Filter):
         self._original_picture = None
         # Indica que el filtro fué finalizado
         self.is_done = False
+        # Para extraer el color
+        self.color = {'r': 255, 'g': 255, 'b': 255}
         self.set_original_picture(picture)
         self.picture = self.get_original_picture()
         self.ui = ui
@@ -49,8 +51,9 @@ class Color(Filter):
         ls_lbl_line_color = getattr(self.ui, f'ls_lbl_line_color_{widget_id}')
         ls_lbl_line_color.setGeometry(QtCore.QRect(10, 30, 16, 21))
         ls_lbl_line_color.setAutoFillBackground(False)
-        ls_lbl_line_color.setStyleSheet("background: rgb(255, 255, 255 );\n"
-                                             "border: 1px solid black;")
+
+        ls_lbl_line_color.setStyleSheet(f"background: rgb({self.color['r']}, {self.color['g']}, {self.color['b']} );\n"
+                                        "border: 1px solid black;")
         ls_lbl_line_color.setText("")
         ls_lbl_line_color.setObjectName(f'ls_lbl_line_color_{widget_id}')
 
@@ -217,6 +220,10 @@ class Color(Filter):
         if event == cv2.EVENT_LBUTTONDBLCLK:
             # Extrae valores de pixel de la imagen
             r, g, b, h, s, v = self.get_pixel_values(x, y)
+            # Actualiza el color
+            self.color['r'] = r
+            self.color['g'] = g
+            self.color['b'] = b
             # Visualiza el color extraído en el label
             ls_lbl_line_color = getattr(self.ui, f'ls_lbl_line_color_{self.widget_id}')
             ls_lbl_line_color.setStyleSheet(f"background: rgb({r}, {g}, {b} );\n""border: 1px solid black;")
@@ -248,3 +255,11 @@ class Color(Filter):
 
         # Genera la capa filtrada con la mascara adecuada
         return picture
+
+    def get_selected_color(self):
+        """
+        Para obtener el color rgb seleccionado
+        :return:
+        """
+        return self.color
+
