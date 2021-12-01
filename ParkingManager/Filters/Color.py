@@ -1,10 +1,15 @@
 import cv2
 import numpy as np
 import copy
+from enum import Enum
 from QTGraphicInterfaces.MainInterface import Ui_Form as Ui
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets, QtGui
 from Filters.Filter import Filter
 from Models.Picture import Picture as Pic
+
+
+class ColorActions(Enum):
+    PickColor = 0
 
 
 class Color(Filter):
@@ -24,7 +29,7 @@ class Color(Filter):
         self.widget_id = widget_id
         self.mask = []
 
-    def draw_widget(self, row: int, col: int, widget_id: int):
+    def draw_widget_1(self, row: int, col: int, widget_id: int):
         """
         Renderiza el widget del filtro en la pantalla
         :param row:
@@ -103,6 +108,228 @@ class Color(Filter):
         ls_btn_capture_color.clicked.connect(self.capture_lines_color)
         ls_sld_line_tolerance.valueChanged.connect(self.sld_tolerancia_linea_evt)
 
+    def draw_widget(self, row: int, col: int, widget_id: int):
+
+        setattr(self.ui, f'ml_frame_{widget_id}', QtWidgets.QFrame(self.ui.scrollAreaWidgetContents))
+        ml_frame = getattr(self.ui, f'ml_frame_{widget_id}')
+        ml_frame.setEnabled(True)
+        ml_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        ml_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        ml_frame.setObjectName(f'ml_frame_{widget_id}')
+
+        setattr(self.ui, f'ml_group_{widget_id}', QtWidgets.QGroupBox(ml_frame))
+        ml_group = getattr(self.ui, f'ml_group_{widget_id}')
+        ml_group.setGeometry(QtCore.QRect(10, 130, 391, 211))
+        ml_group.setObjectName(f'ml_group_{widget_id}')
+
+        setattr(self.ui, f'ml_lbl_color_h_min_{widget_id}', QtWidgets.QLabel(ml_group))
+        ml_lbl_color_h_min = getattr(self.ui, f'ml_lbl_color_h_min_{widget_id}')
+        ml_lbl_color_h_min.setGeometry(QtCore.QRect(110, 110, 31, 16))
+        ml_lbl_color_h_min.setObjectName(f'ml_lbl_color_h_min_{widget_id}')
+
+        setattr(self.ui, f'ml_sld_color_s_min_{widget_id}', QtWidgets.QSlider(ml_group))
+        ml_sld_color_s_min = getattr(self.ui, f'ml_sld_color_s_min_{widget_id}')
+        ml_sld_color_s_min.setGeometry(QtCore.QRect(40, 130, 161, 22))
+        ml_sld_color_s_min.setMinimum(0)
+        ml_sld_color_s_min.setMaximum(255)
+        ml_sld_color_s_min.setPageStep(1)
+        ml_sld_color_s_min.setSliderPosition(11)
+        ml_sld_color_s_min.setTracking(False)
+        ml_sld_color_s_min.setOrientation(QtCore.Qt.Horizontal)
+        ml_sld_color_s_min.setObjectName(f'ml_sld_color_s_min_{widget_id}')
+
+        setattr(self.ui, f'ml_sld_color_v_min_{widget_id}', QtWidgets.QSlider(ml_group))
+        ml_sld_color_v_min = getattr(self.ui, f'ml_sld_color_v_min_{widget_id}')
+        ml_sld_color_v_min.setGeometry(QtCore.QRect(40, 170, 161, 22))
+        ml_sld_color_v_min.setMinimum(0)
+        ml_sld_color_v_min.setMaximum(255)
+        ml_sld_color_v_min.setPageStep(1)
+        ml_sld_color_v_min.setSliderPosition(11)
+        ml_sld_color_v_min.setTracking(False)
+        ml_sld_color_v_min.setOrientation(QtCore.Qt.Horizontal)
+        ml_sld_color_v_min.setObjectName(f'ml_sld_color_v_min_{widget_id}')
+
+        setattr(self.ui, f'ml_sld_color_s_max_{widget_id}', QtWidgets.QSlider(ml_group))
+        ml_sld_color_s_max = getattr(self.ui, f'ml_sld_color_s_max_{widget_id}')
+        ml_sld_color_s_max.setGeometry(QtCore.QRect(220, 130, 161, 22))
+        ml_sld_color_s_max.setMinimum(0)
+        ml_sld_color_s_max.setMaximum(255)
+        ml_sld_color_s_max.setPageStep(1)
+        ml_sld_color_s_max.setSliderPosition(11)
+        ml_sld_color_s_max.setTracking(False)
+        ml_sld_color_s_max.setOrientation(QtCore.Qt.Horizontal)
+        ml_sld_color_s_max.setObjectName(f'ml_sld_color_s_max_{widget_id}')
+
+        setattr(self.ui, f'ml_sld_color_v_max_{widget_id}', QtWidgets.QSlider(ml_group))
+        ml_sld_color_v_max = getattr(self.ui, f'ml_sld_color_v_max_{widget_id}')
+        ml_sld_color_v_max.setGeometry(QtCore.QRect(220, 170, 161, 22))
+        ml_sld_color_v_max.setMinimum(0)
+        ml_sld_color_v_max.setMaximum(255)
+        ml_sld_color_v_max.setPageStep(1)
+        ml_sld_color_v_max.setSliderPosition(11)
+        ml_sld_color_v_max.setTracking(False)
+        ml_sld_color_v_max.setOrientation(QtCore.Qt.Horizontal)
+        ml_sld_color_v_max.setObjectName(f'ml_sld_color_v_max_{widget_id}')
+
+        setattr(self.ui, f'ml_lbl_color_h_max_{widget_id}',QtWidgets.QLabel(ml_group))
+        ml_lbl_color_h_max = getattr(self.ui, f'ml_lbl_color_h_max_{widget_id}')
+        ml_lbl_color_h_max.setGeometry(QtCore.QRect(290, 110, 31, 16))
+        ml_lbl_color_h_max.setObjectName(f'ml_lbl_color_h_max_{widget_id}')
+
+        setattr(self.ui, f'ml_lbl_color_s_min_{widget_id}', QtWidgets.QLabel(ml_group))
+        ml_lbl_color_s_min = getattr(self.ui, f'ml_lbl_color_s_min_{widget_id}')
+        ml_lbl_color_s_min.setGeometry(QtCore.QRect(110, 150, 31, 16))
+        ml_lbl_color_s_min.setObjectName(f'ml_lbl_color_s_min_{widget_id}')
+
+        setattr(self.ui, f'ml_lbl_s_{widget_id}', QtWidgets.QLabel(ml_group))
+        ml_lbl_s = getattr(self.ui, f'ml_lbl_s_{widget_id}')
+        ml_lbl_s.setGeometry(QtCore.QRect(10, 130, 31, 16))
+        ml_lbl_s.setObjectName(f'ml_lbl_s_{widget_id}')
+
+        setattr(self.ui, f'ml_lbl_v_{widget_id}', QtWidgets.QLabel(ml_group))
+        ml_lbl_v = getattr(self.ui, f'ml_lbl_v_{widget_id}')
+        ml_lbl_v.setGeometry(QtCore.QRect(10, 170, 31, 16))
+        ml_lbl_v.setObjectName(f'ml_lbl_v_{widget_id}')
+
+        setattr(self.ui, f'ml_lbl_h_{widget_id}', QtWidgets.QLabel(ml_group))
+        ml_lbl_h = getattr(self.ui, f'ml_lbl_h_{widget_id}')
+        ml_lbl_h.setGeometry(QtCore.QRect(10, 90, 31, 16))
+        ml_lbl_h.setObjectName(f'ml_lbl_h_{widget_id}')
+
+        setattr(self.ui, f'ml_sld_color_h_min_{widget_id}', QtWidgets.QSlider(ml_group))
+        ml_sld_color_h_min = getattr(self.ui, f'ml_sld_color_h_min_{widget_id}')
+        ml_sld_color_h_min.setGeometry(QtCore.QRect(40, 90, 161, 22))
+        ml_sld_color_h_min.setMinimum(0)
+        ml_sld_color_h_min.setMaximum(179)
+        ml_sld_color_h_min.setPageStep(1)
+        ml_sld_color_h_min.setSliderPosition(90)
+        ml_sld_color_h_min.setTracking(False)
+        ml_sld_color_h_min.setOrientation(QtCore.Qt.Horizontal)
+        ml_sld_color_h_min.setObjectName(f'ml_sld_color_h_min_{widget_id}')
+
+        setattr(self.ui, f'ml_sld_color_h_max_{widget_id}', QtWidgets.QSlider(ml_group))
+        ml_sld_color_h_max = getattr(self.ui, f'ml_sld_color_h_max_{widget_id}')
+        ml_sld_color_h_max.setGeometry(QtCore.QRect(220, 90, 161, 22))
+        ml_sld_color_h_max.setMinimum(0)
+        ml_sld_color_h_max.setMaximum(179)
+        ml_sld_color_h_max.setPageStep(1)
+        ml_sld_color_h_max.setSliderPosition(90)
+        ml_sld_color_h_max.setTracking(False)
+        ml_sld_color_h_max.setOrientation(QtCore.Qt.Horizontal)
+        ml_sld_color_h_max.setObjectName(f'ml_sld_color_h_max_{widget_id}')
+
+        setattr(self.ui, f'ml_lbl_color_v_min_{widget_id}', QtWidgets.QLabel(ml_group))
+        ml_lbl_color_v_min = getattr(self.ui, f'ml_lbl_color_v_min_{widget_id}')
+        ml_lbl_color_v_min.setGeometry(QtCore.QRect(110, 190, 31, 16))
+        ml_lbl_color_v_min.setObjectName(f'ml_lbl_color_v_min_{widget_id}')
+
+        setattr(self.ui, f'ml_lbl_color_s_max_{widget_id}', QtWidgets.QLabel(ml_group))
+        ml_lbl_color_s_max = getattr(self.ui, f'ml_lbl_color_s_max_{widget_id}')
+        ml_lbl_color_s_max.setGeometry(QtCore.QRect(290, 150, 31, 16))
+        ml_lbl_color_s_max.setObjectName(f'ml_lbl_color_s_max_{widget_id}')
+
+        setattr(self.ui, f'ml_btn_color_{widget_id}', QtWidgets.QPushButton(ml_group))
+        ml_btn_color = getattr(self.ui, f'ml_btn_color_{widget_id}')
+        ml_btn_color.setGeometry(QtCore.QRect(10, 20, 40, 40))
+        ml_btn_color.setMinimumSize(QtCore.QSize(40, 40))
+        ml_btn_color.setMaximumSize(QtCore.QSize(40, 40))
+        ml_btn_color.setStyleSheet("border-color: rgb(255, 85, 0);")
+        ml_btn_color.setText("")
+        icon_ml_btn_color = QtGui.QIcon()
+        icon_ml_btn_color.addPixmap(QtGui.QPixmap("icons/color.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        ml_btn_color.setIcon(icon_ml_btn_color)
+        ml_btn_color.setIconSize(QtCore.QSize(32, 32))
+        ml_btn_color.setObjectName(f'ml_btn_color_{widget_id}')
+
+        setattr(self.ui, f'ml_lbl_color_{widget_id}',QtWidgets.QLabel(ml_group))
+        ml_lbl_color = getattr(self.ui, f'ml_lbl_color_{widget_id}')
+        ml_lbl_color.setGeometry(QtCore.QRect(50, 20, 38, 38))
+        ml_lbl_color.setMinimumSize(QtCore.QSize(38, 38))
+        ml_lbl_color.setMaximumSize(QtCore.QSize(38, 38))
+        ml_lbl_color.setAutoFillBackground(False)
+        ml_lbl_color.setStyleSheet("background: rgb(255, 255, 255);\n"
+                                        "border: 1px solid gray;")
+        ml_lbl_color.setText("")
+        ml_lbl_color.setObjectName(f'ml_lbl_color_{widget_id}')
+
+        setattr(self.ui, f'ml_btn_view_{widget_id}', QtWidgets.QPushButton(ml_group))
+        ml_btn_view = getattr(self.ui, f'ml_btn_view_{widget_id}')
+        ml_btn_view.setGeometry(QtCore.QRect(260, 20, 40, 40))
+        ml_btn_view.setMinimumSize(QtCore.QSize(40, 40))
+        ml_btn_view.setMaximumSize(QtCore.QSize(40, 40))
+        ml_btn_view.setStyleSheet("border-color: rgb(255, 85, 0);")
+        ml_btn_view.setText("")
+        icon_ml_btn_view = QtGui.QIcon()
+        icon_ml_btn_view.addPixmap(QtGui.QPixmap("icons/ver.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        ml_btn_view.setIcon(icon_ml_btn_view)
+        ml_btn_view.setIconSize(QtCore.QSize(32, 32))
+        ml_btn_view.setObjectName(f'ml_btn_view_{widget_id}')
+
+        setattr(self.ui, f'ml_btn_clear_{widget_id}', QtWidgets.QPushButton(ml_group))
+        ml_btn_clear = getattr(self.ui, f'ml_btn_clear_{widget_id}')
+        ml_btn_clear.setGeometry(QtCore.QRect(300, 20, 40, 40))
+        ml_btn_clear.setMinimumSize(QtCore.QSize(40, 40))
+        ml_btn_clear.setMaximumSize(QtCore.QSize(40, 40))
+        ml_btn_clear.setText("")
+        icon_ml_btn_clear = QtGui.QIcon()
+        icon_ml_btn_clear.addPixmap(QtGui.QPixmap("icons/limpiar.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        ml_btn_clear.setIcon(icon_ml_btn_clear)
+        ml_btn_clear.setIconSize(QtCore.QSize(32, 32))
+        ml_btn_clear.setObjectName(f'ml_btn_clear_{widget_id}')
+
+        setattr(self.ui, f'ml_lbl_min_{widget_id}', QtWidgets.QLabel(ml_group))
+        ml_lbl_min = getattr(self.ui, f'ml_lbl_min_{widget_id}')
+        ml_lbl_min.setGeometry(QtCore.QRect(40, 70, 31, 16))
+        ml_lbl_min.setObjectName(f'ml_lbl_min_{widget_id}')
+
+        setattr(self.ui, f'ml_lbl_max_{widget_id}', QtWidgets.QLabel(ml_group))
+        ml_lbl_max = getattr(self.ui, f'ml_lbl_max_{widget_id}')
+        ml_lbl_max.setGeometry(QtCore.QRect(220, 70, 31, 16))
+        ml_lbl_max.setObjectName(f'ml_lbl_max_{widget_id}')
+
+        setattr(self.ui, f'ml_btn_delete_{widget_id}', QtWidgets.QPushButton(ml_group))
+        ml_btn_delete = getattr(self.ui, f'ml_btn_delete_{widget_id}')
+        ml_btn_delete.setGeometry(QtCore.QRect(340, 20, 40, 40))
+        ml_btn_delete.setMinimumSize(QtCore.QSize(40, 40))
+        ml_btn_delete.setMaximumSize(QtCore.QSize(40, 40))
+        ml_btn_delete.setText("")
+        icon_ml_btn_delete = QtGui.QIcon()
+        icon_ml_btn_delete.addPixmap(QtGui.QPixmap("icons/eliminar.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        ml_btn_delete.setIcon(icon_ml_btn_delete)
+        ml_btn_delete.setIconSize(QtCore.QSize(32, 32))
+        ml_btn_delete.setObjectName(f'ml_btn_delete_{widget_id}')
+
+        setattr(self.ui, f'ml_lbl_color_v_max_{widget_id}', QtWidgets.QLabel(ml_group))
+        ml_lbl_color_v_max = getattr(self.ui, f'ml_lbl_color_v_max_{widget_id}')
+        ml_lbl_color_v_max.setGeometry(QtCore.QRect(290, 190, 31, 16))
+        ml_lbl_color_v_max.setObjectName(f'ml_lbl_color_v_max_{widget_id}')
+
+        _translate = QtCore.QCoreApplication.translate
+        ml_group.setTitle(_translate("MainWindow", "Mascara de lineas"))
+        ml_lbl_color_h_min.setText(_translate("MainWindow", "11 %"))
+        ml_lbl_color_h_max.setText(_translate("MainWindow", "11 %"))
+        ml_lbl_color_s_min.setText(_translate("MainWindow", "11 %"))
+        ml_lbl_s.setText(_translate("MainWindow", "S"))
+        ml_lbl_v.setText(_translate("MainWindow", "V"))
+        ml_lbl_h.setText(_translate("MainWindow", "H"))
+        ml_lbl_color_v_min.setText(_translate("MainWindow", "11 %"))
+        ml_lbl_color_s_max.setText(_translate("MainWindow", "11 %"))
+        ml_btn_color.setToolTip(_translate("MainWindow", "<html><head/><body><p>Dibujar linea</p></body></html>"))
+        ml_btn_color.setWhatsThis(
+            _translate("MainWindow", "<html><head/><body><p>Dibujar linea</p></body></html>"))
+        ml_btn_view.setToolTip(_translate("MainWindow", "<html><head/><body><p>Dibujar linea</p></body></html>"))
+        ml_btn_view.setWhatsThis(_translate("MainWindow", "<html><head/><body><p>Dibujar linea</p></body></html>"))
+        ml_btn_clear.setToolTip(_translate("MainWindow", "<html><head/><body><p>Limpiar</p></body></html>"))
+        ml_lbl_min.setText(_translate("MainWindow", "Min"))
+        ml_lbl_max.setText(_translate("MainWindow", "Max"))
+        ml_btn_delete.setToolTip(_translate("MainWindow", "<html><head/><body><p>Limpiar</p></body></html>"))
+        ml_lbl_color_v_max.setText(_translate("MainWindow", "11 %"))
+
+        self.ui.gridLayout.addWidget(ml_frame, row, col, 1, 1)
+
+        # Conexiones
+        ml_btn_color.clicked.connect(lambda callback: self.capture_lines_color())
+
     def set_original_picture(self, picture):
         self._original_picture = copy.deepcopy(picture)
 
@@ -139,8 +366,7 @@ class Color(Filter):
 
         return r_val, g_val, b_val, h_val, s_val, v_val
 
-    @staticmethod
-    def calculate_hsv_mask(image_hsv, h, s, v, tolerance):
+    def calculate_hsv_mask(self, image_hsv, h, s, v, tolerance):
         """
         Calcula la mascara hsv de un color especifico con la tolerancia especifica
         :param image_hsv:
@@ -169,6 +395,34 @@ class Color(Filter):
 
         if h_high > 179:
             h_high = h_high - 180
+
+        # Asigna valores a los sliders
+        ml_sld_color_h_max = getattr(self.ui, f'ml_sld_color_h_max_{self.widget_id}')
+        ml_sld_color_h_max.setValue(h_high)
+        ml_sld_color_h_min = getattr(self.ui, f'ml_sld_color_h_min_{self.widget_id}')
+        ml_sld_color_h_min.setValue(h_low)
+        ml_lbl_color_h_max = getattr(self.ui, f'ml_lbl_color_h_max_{self.widget_id}')
+        ml_lbl_color_h_max.setText(str(h_high))
+        ml_lbl_color_h_min = getattr(self.ui, f'ml_lbl_color_h_min_{self.widget_id}')
+        ml_lbl_color_h_min.setText(str(h_low))
+
+        ml_sld_color_s_max = getattr(self.ui, f'ml_sld_color_s_max_{self.widget_id}')
+        ml_sld_color_s_max.setValue(s_high)
+        ml_sld_color_s_min = getattr(self.ui, f'ml_sld_color_s_min_{self.widget_id}')
+        ml_sld_color_s_min.setValue(s_low)
+        ml_lbl_color_s_max = getattr(self.ui, f'ml_lbl_color_s_max_{self.widget_id}')
+        ml_lbl_color_s_max.setText(str(s_high))
+        ml_lbl_color_s_min = getattr(self.ui, f'ml_lbl_color_s_min_{self.widget_id}')
+        ml_lbl_color_s_min.setText(str(s_low))
+
+        ml_sld_color_v_max = getattr(self.ui, f'ml_sld_color_v_max_{self.widget_id}')
+        ml_sld_color_v_max.setValue(v_high)
+        ml_sld_color_v_min = getattr(self.ui, f'ml_sld_color_v_min_{self.widget_id}')
+        ml_sld_color_v_min.setValue(v_low)
+        ml_lbl_color_v_max = getattr(self.ui, f'ml_lbl_color_v_max_{self.widget_id}')
+        ml_lbl_color_v_max.setText(str(v_high))
+        ml_lbl_color_v_min = getattr(self.ui, f'ml_lbl_color_v_min_{self.widget_id}')
+        ml_lbl_color_v_min.setText(str(v_low))
 
         mask = None
 
@@ -225,13 +479,14 @@ class Color(Filter):
             self.color['g'] = g
             self.color['b'] = b
             # Visualiza el color extraído en el label
-            ls_lbl_line_color = getattr(self.ui, f'ls_lbl_line_color_{self.widget_id}')
-            ls_lbl_line_color.setStyleSheet(f"background: rgb({r}, {g}, {b} );\n""border: 1px solid black;")
+            ml_lbl_color = getattr(self.ui, f'ml_lbl_color_{self.widget_id}')
+            ml_lbl_color.setStyleSheet(f"background: rgb({r}, {g}, {b} );\n""border: 1px solid black;")
             # Cambia espacio de color
             hsv = cv2.cvtColor(self.picture, cv2.COLOR_BGR2HSV)
             # Lee la tolerancia del slider
-            ls_sld_line_tolerance = getattr(self.ui, f'ls_sld_line_tolerance_{self.widget_id}')
-            tolerance = int(ls_sld_line_tolerance.value())
+            # ls_sld_line_tolerance = getattr(self.ui, f'ls_sld_line_tolerance_{self.widget_id}')
+            # tolerance = int(ls_sld_line_tolerance.value())
+            tolerance = 10
             # Calcula la mascara
             self.mask = self.calculate_hsv_mask(hsv, h, s, v, tolerance)
             # AND entre las dos mascaras

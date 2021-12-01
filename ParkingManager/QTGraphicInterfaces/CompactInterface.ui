@@ -399,20 +399,7 @@
       <string>11 %</string>
      </property>
     </widget>
-    <widget class="QLabel" name="ml_sld_color_v_max_2">
-     <property name="geometry">
-      <rect>
-       <x>290</x>
-       <y>190</y>
-       <width>31</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>11 %</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="ls_lbl_line_tolerance_5">
+    <widget class="QLabel" name="ml_lbl_s">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -425,7 +412,7 @@
       <string>S</string>
      </property>
     </widget>
-    <widget class="QLabel" name="ls_lbl_line_tolerance_6">
+    <widget class="QLabel" name="ml_lbl_v">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -438,7 +425,7 @@
       <string>V</string>
      </property>
     </widget>
-    <widget class="QLabel" name="ls_lbl_line_tolerance_7">
+    <widget class="QLabel" name="ml_lbl_h">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -691,7 +678,7 @@ border: 1px solid gray;</string>
       </size>
      </property>
     </widget>
-    <widget class="QLabel" name="ls_lbl_line_tolerance_8">
+    <widget class="QLabel" name="ml_lbl_min">
      <property name="geometry">
       <rect>
        <x>40</x>
@@ -704,7 +691,7 @@ border: 1px solid gray;</string>
       <string>Min</string>
      </property>
     </widget>
-    <widget class="QLabel" name="ls_lbl_line_tolerance_10">
+    <widget class="QLabel" name="ml_lbl_max">
      <property name="geometry">
       <rect>
        <x>220</x>
@@ -753,6 +740,19 @@ border: 1px solid gray;</string>
        <width>32</width>
        <height>32</height>
       </size>
+     </property>
+    </widget>
+    <widget class="QLabel" name="ml_lbl_color_v_max">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>190</y>
+       <width>31</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>11 %</string>
      </property>
     </widget>
    </widget>

@@ -31,6 +31,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.btn_load_image.clicked.connect(self.open_image)
         self.ui.btn_delimite.clicked.connect(lambda callback: self.create_filter(FilterTypes.DelimiteArea))
         self.ui.btn_transformation.clicked.connect(lambda callback: self.create_filter(FilterTypes.Transformation))
+        self.ui.btn_color.clicked.connect(lambda callback: self.create_filter(FilterTypes.Color))
         # self.ui.btn_color_lines.clicked.connect(lambda callback: self.create_filter(FilterTypes.Color))
         # self.ui.btn_color_space.clicked.connect(lambda callback: self.create_filter(FilterTypes.ColorSpace))
         # self.ui.btn_delimite_area.clicked.connect(lambda callback: self.create_filter(FilterTypes.DelimiteArea))

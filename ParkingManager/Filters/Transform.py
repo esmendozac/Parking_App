@@ -321,18 +321,8 @@ class Transform(Filter):
         Genera el resultado del filtro aplicado
         :return:
         """
-        mask = self.get_all_masks_limits()
-
         picture = Pic()
-        image_with_contours = cv2.bitwise_and(self.get_original_picture(), self.get_original_picture(), mask=mask)
-
-        for limit in filter(lambda c: len(c) > 0, self.limits):
-            contours = np.array([limit])
-            # Dibuja el contorno en la imagen original
-            cv2.drawContours(image_with_contours, contours, -1,
-                             (int(self.color['r']), int(self.color['g']), int(self.color['b'])), 2)
-
-        picture.create_picture_from_content(image_with_contours)
+        picture.create_picture_from_content(self.picture)
 
         # Genera la capa filtrada con la mascara adecuada
         return picture
