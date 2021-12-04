@@ -6,6 +6,7 @@ from Filters.Color import Color as Col
 from Filters.ColorSpace import ColorSpace as Cos
 from Filters.Delimite import Delimite as De
 from Filters.Transform import Transform as Tr
+from Filters.TPerspective import TPerspective as Tp
 
 
 class FactoryFilter:
@@ -16,7 +17,7 @@ class FactoryFilter:
         self.ui = ui
         self.picture = picture
 
-    def create_filter(self, filter_id, row, col, widget_id, last_filter):
+    def create_filter(self, filter_id, row, col, widget_id, last_filter, coordinates):
         """
         Construye instancias de filtros
         :param filter_id:
@@ -24,8 +25,10 @@ class FactoryFilter:
         :param col:
         :param widget_id:
         :param last_filter:
+        :param coordinates:
         :return:
         """
+
         if filter_id == FilterTypes.DrawZones:
             if last_filter is not None:
                 if isinstance(last_filter, Col):
@@ -44,6 +47,7 @@ class FactoryFilter:
             return De(self.picture.content, self.ui, row, col, widget_id)
         elif filter_id == FilterTypes.Transformation:
             return Tr(self.picture.content, self.ui, row, col, widget_id)
+        elif filter_id == FilterTypes.PerspectiveTransformation:
+            return Tp(self.picture.content, self.ui, row, col, widget_id, coordinates)
         else:
             raise Exception('No se pudo crear el filtro solicitado porque no existe en la enumeración')
-

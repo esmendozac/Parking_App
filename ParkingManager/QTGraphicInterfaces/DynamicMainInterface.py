@@ -50,9 +50,9 @@ class Ui_MainWindow(object):
         self.btn_transformation = QtWidgets.QPushButton(self.gbr_add_filter)
         self.btn_transformation.setGeometry(QtCore.QRect(180, 20, 71, 23))
         self.btn_transformation.setObjectName("btn_transformation")
-        self.btn_contours = QtWidgets.QPushButton(self.gbr_add_filter)
-        self.btn_contours.setGeometry(QtCore.QRect(250, 20, 71, 23))
-        self.btn_contours.setObjectName("btn_contours")
+        self.btn_perspective = QtWidgets.QPushButton(self.gbr_add_filter)
+        self.btn_perspective.setGeometry(QtCore.QRect(250, 20, 71, 23))
+        self.btn_perspective.setObjectName("btn_perspective")
         self.btn_search = QtWidgets.QPushButton(self.gbr_add_filter)
         self.btn_search.setGeometry(QtCore.QRect(320, 20, 71, 23))
         self.btn_search.setObjectName("btn_search")
@@ -74,7 +74,7 @@ class Ui_MainWindow(object):
         self.btn_delimite.setText(_translate("MainWindow", "Delimitar "))
         self.btn_color.setText(_translate("MainWindow", "Color"))
         self.btn_transformation.setText(_translate("MainWindow", "Transf. libre"))
-        self.btn_contours.setText(_translate("MainWindow", "Contornos"))
+        self.btn_perspective.setText(_translate("MainWindow", "Perspectiva"))
         self.btn_search.setText(_translate("MainWindow", "Busqueda"))
 
 

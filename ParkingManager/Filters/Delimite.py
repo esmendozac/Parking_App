@@ -317,6 +317,8 @@ class Delimite(Filter):
 
         picture.create_picture_from_content(image_with_contours)
 
+        print(self.get_coordinates())
+
         # Genera la capa filtrada con la mascara adecuada
         return picture
 
@@ -325,4 +327,11 @@ class Delimite(Filter):
 
     def get_original_picture(self):
         return copy.deepcopy(self._original_picture)
+
+    def get_coordinates(self):
+        """
+        Extracción de coordenadas delimitadas
+        :return:
+        """
+        return [l for l in self.limits if len(l) > 0]
 

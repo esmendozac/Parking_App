@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QFileDialog
 from Models.Picture import Picture as Pic
 from Filters.Filter import FilterTypes, Filter
 from Filters.FactoryFilters import FactoryFilter as Ff
+from Filters.Delimite import Delimite as De
 
 import sys
 
@@ -13,6 +14,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # region Attributes
     picture = None
     filters: Filter = []
+    coordinates = []
 
     # endregion
 
@@ -32,6 +34,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.btn_delimite.clicked.connect(lambda callback: self.create_filter(FilterTypes.DelimiteArea))
         self.ui.btn_transformation.clicked.connect(lambda callback: self.create_filter(FilterTypes.Transformation))
         self.ui.btn_color.clicked.connect(lambda callback: self.create_filter(FilterTypes.Color))
+        self.ui.btn_perspective.clicked.connect(lambda callback: self.create_filter(FilterTypes.PerspectiveTransformation))
         # self.ui.btn_color_lines.clicked.connect(lambda callback: self.create_filter(FilterTypes.Color))
         # self.ui.btn_color_space.clicked.connect(lambda callback: self.create_filter(FilterTypes.ColorSpace))
         # self.ui.btn_delimite_area.clicked.connect(lambda callback: self.create_filter(FilterTypes.DelimiteArea))
@@ -65,13 +68,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
         last_filter = None
 
+        # Busca filtro que tenga coordenadas y las extrae
+        for f in self.filters:
+            if isinstance(f, De):
+                self.coordinates.append(f.get_coordinates())
+
         if len(self.filters) == 0:
             factory = Ff(self.picture, self.ui)
         else:
             last_filter = self.filters[-1]
             factory = Ff(last_filter.get_picture_filtered(), self.ui)
 
-        self.filters.append(factory.create_filter(filter_id, row, col, widget_id, last_filter))
+        self.filters.append(factory.create_filter(filter_id, row, col, widget_id, last_filter, self.coordinates))
 
     def disable_all_buttons(self, state: bool):
         """
@@ -83,7 +91,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.btn_color.setDisabled(state)
         self.ui.btn_transformation.setDisabled(state)
         self.ui.btn_search.setDisabled(state)
-        self.ui.btn_contours.setDisabled(state)
+        self.ui.btn_perspective.setDisabled(state)
 
 
 app = QtWidgets.QApplication([])
