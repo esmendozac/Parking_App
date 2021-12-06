@@ -4,7 +4,7 @@ import copy
 from enum import Enum
 from Models import Utils
 
-from QTGraphicInterfaces.MainInterface import Ui_Form as Ui
+from QTGraphicInterfaces.DynamicMainInterfaceForm import Ui_MainWindow as Ui
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Filters.Filter import Filter
 from Models.Picture import Picture as Pic
@@ -56,16 +56,9 @@ class Delimite(Filter):
         :return:
         """
 
-        setattr(self.ui, f'da_frame_{widget_id}', QtWidgets.QFrame(self.ui.scrollAreaWidgetContents))
-        da_frame = getattr(self.ui, f'da_frame_{widget_id}')
-        da_frame.setEnabled(True)
-        da_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        da_frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        da_frame.setObjectName(f'da_frame_{widget_id}')
-
-        setattr(self.ui, f'da_group_{widget_id}', QtWidgets.QGroupBox(da_frame))
+        setattr(self.ui, f'da_group_{widget_id}', QtWidgets.QGroupBox(self.ui.scrollAreaWidgetContents))
         da_group = getattr(self.ui, f'da_group_{widget_id}')
-        da_group.setGeometry(QtCore.QRect(10, 10, 391, 81))
+        da_group.setMinimumSize(QtCore.QSize(0, 90))
         da_group.setObjectName(f'da_group_{widget_id}')
 
         setattr(self.ui, f'da_btn_clear_{widget_id}', QtWidgets.QPushButton(da_group))
@@ -125,7 +118,7 @@ class Delimite(Filter):
         da_btn_view.setToolTip(_translate("MainWindow", "<html><head/><body><p>Ver imagen</p></body></html>"))
         da_btn_delete.setToolTip(_translate("MainWindow", "<html><head/><body><p>Limpiar</p></body></html>"))
 
-        self.ui.gridLayout.addWidget(da_frame, row, col, 1, 1)
+        self.ui.formLayout.setWidget(widget_id, QtWidgets.QFormLayout.FieldRole, da_group)
 
         # Conexiones
         da_btn_coordinates.clicked.connect(lambda callback: self.set_action_button(DelimiteActions.Coordinates))

@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets
-from QTGraphicInterfaces.DynamicMainInterface import Ui_MainWindow
+from QTGraphicInterfaces.DynamicMainInterfaceForm import Ui_MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from Models.Picture import Picture as Pic
@@ -31,7 +31,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Conexiones
         self.ui.btn_load_image.clicked.connect(self.open_image)
-        self.ui.btn_delimite.clicked.connect(lambda callback: self.create_filter(FilterTypes.DelimiteArea))
+        self.ui.btn_delimite.clicked.connect(lambda callback: self.create_filter(FilterTypes.Delimite))
         self.ui.btn_transformation.clicked.connect(lambda callback: self.create_filter(FilterTypes.Transformation))
         self.ui.btn_color.clicked.connect(lambda callback: self.create_filter(FilterTypes.Color))
         self.ui.btn_perspective.clicked.connect(lambda callback: self.create_filter(FilterTypes.PerspectiveTransformation))

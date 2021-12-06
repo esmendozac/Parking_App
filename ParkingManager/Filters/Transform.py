@@ -4,7 +4,7 @@ import copy
 from enum import Enum
 from Models import Utils
 
-from QTGraphicInterfaces.MainInterface import Ui_Form as Ui
+from QTGraphicInterfaces.DynamicMainInterfaceForm import Ui_MainWindow as Ui
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Filters.Filter import Filter
 from Models.Picture import Picture as Pic
@@ -61,16 +61,17 @@ class Transform(Filter):
         :return:
         """
 
-        setattr(self.ui, f'tl_frame_{widget_id}', QtWidgets.QFrame(self.ui.scrollAreaWidgetContents))
-        tl_frame = getattr(self.ui, f'tl_frame_{widget_id}')
-        tl_frame.setEnabled(True)
-        tl_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        tl_frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        tl_frame.setObjectName(f'tl_frame_{widget_id}')
+        # setattr(self.ui, f'tl_frame_{widget_id}', QtWidgets.QFrame(self.ui.scrollAreaWidgetContents))
+        # tl_frame = getattr(self.ui, f'tl_frame_{widget_id}')
+        # tl_frame.setEnabled(True)
+        # tl_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        # tl_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        # tl_frame.setObjectName(f'tl_frame_{widget_id}')
 
-        setattr(self.ui, f'tl_group_{widget_id}', QtWidgets.QGroupBox(tl_frame))
+        setattr(self.ui, f'tl_group_{widget_id}', QtWidgets.QGroupBox(self.ui.scrollAreaWidgetContents))
         tl_group = getattr(self.ui, f'tl_group_{widget_id}')
-        tl_group.setGeometry(QtCore.QRect(10, 10, 391, 81))
+        # tl_group.setGeometry(QtCore.QRect(10, 10, 391, 81))
+        tl_group.setMinimumSize(QtCore.QSize(0, 90))
         tl_group.setObjectName(f'tl_group_{widget_id}')
 
         setattr(self.ui, f'tl_btn_clear_{widget_id}', QtWidgets.QPushButton(tl_group))
@@ -178,7 +179,8 @@ class Transform(Filter):
         tl_lbl_thickness.setText(_translate("MainWindow", f"{self.thickness}"))
         tl_btn_delete.setToolTip(_translate("MainWindow", "<html><head/><body><p>Limpiar</p></body></html>"))
 
-        self.ui.gridLayout.addWidget(tl_frame, row, col, 1, 1)
+        # self.ui.gridLayout.addWidget(tl_frame, row, col, 1, 1)
+        self.ui.formLayout.setWidget(widget_id, QtWidgets.QFormLayout.FieldRole, tl_group)
 
         # Conexiones
         tl_btn_lines.clicked.connect(lambda callback: self.set_action_button(TransformActions.Line))

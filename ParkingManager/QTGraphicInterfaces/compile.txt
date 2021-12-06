@@ -3,3 +3,7 @@ python -m PyQt5.uic.pyuic -x QTGraphicInterfaces/MasterMainInterface.ui -o QTGra
 python -m PyQt5.uic.pyuic -x QTGraphicInterfaces/DynamicMainInterface.ui -o QTGraphicInterfaces/DynamicMainInterface.py
 
 python -m PyQt5.uic.pyuic -x QTGraphicInterfaces/CompactInterface.ui -o QTGraphicInterfaces/CompactInterface.py
+
+python -m PyQt5.uic.pyuic -x QTGraphicInterfaces/TestFormLayout.ui -o QTGraphicInterfaces/TestFormLayout.py
+
+python -m PyQt5.uic.pyuic -x QTGraphicInterfaces/DynamicMainInterfaceForm.ui -o QTGraphicInterfaces/DynamicMainInterfaceForm.py

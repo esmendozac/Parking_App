@@ -8,7 +8,7 @@ class FilterTypes(Enum):
     DrawZones = 0
     Color = 1
     ColorSpace = 2,
-    DelimiteArea = 3,
+    Delimite = 3,
     Transformation = 4,
     PerspectiveTransformation = 5
 

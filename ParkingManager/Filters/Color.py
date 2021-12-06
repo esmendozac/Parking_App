@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import copy
 from enum import Enum
-from QTGraphicInterfaces.MainInterface import Ui_Form as Ui
+from QTGraphicInterfaces.DynamicMainInterfaceForm import Ui_MainWindow as Ui
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Filters.Filter import Filter
 from Models.Picture import Picture as Pic
@@ -34,16 +34,9 @@ class Color(Filter):
 
     def draw_widget(self, row: int, col: int, widget_id: int):
 
-        setattr(self.ui, f'ml_frame_{widget_id}', QtWidgets.QFrame(self.ui.scrollAreaWidgetContents))
-        ml_frame = getattr(self.ui, f'ml_frame_{widget_id}')
-        ml_frame.setEnabled(True)
-        ml_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        ml_frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        ml_frame.setObjectName(f'ml_frame_{widget_id}')
-
-        setattr(self.ui, f'ml_group_{widget_id}', QtWidgets.QGroupBox(ml_frame))
+        setattr(self.ui, f'ml_group_{widget_id}', QtWidgets.QGroupBox(self.ui.scrollAreaWidgetContents))
         ml_group = getattr(self.ui, f'ml_group_{widget_id}')
-        ml_group.setGeometry(QtCore.QRect(10, 130, 391, 211))
+        ml_group.setMinimumSize(QtCore.QSize(0, 220))
         ml_group.setObjectName(f'ml_group_{widget_id}')
 
         setattr(self.ui, f'ml_lbl_color_h_min_{widget_id}', QtWidgets.QLabel(ml_group))
@@ -248,7 +241,7 @@ class Color(Filter):
         ml_btn_delete.setToolTip(_translate("MainWindow", "<html><head/><body><p>Limpiar</p></body></html>"))
         ml_lbl_color_v_max.setText(_translate("MainWindow", ""))
 
-        self.ui.gridLayout.addWidget(ml_frame, row, col, 1, 1)
+        self.ui.formLayout.setWidget(widget_id, QtWidgets.QFormLayout.FieldRole, ml_group)
         # Conexiones
         ml_btn_color.clicked.connect(lambda callback: self.capture_lines_color())
         ml_btn_view.clicked.connect(lambda callback: self.open_image())

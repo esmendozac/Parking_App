@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'QTGraphicInterfaces/DynamicMainInterface.ui'
+# Form implementation generated from reading ui file 'QTGraphicInterfaces/DynamicMainInterfaceForm.ui'
 #
 # Created by: PyQt5 UI code generator 5.12.3
 #
@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(441, 801)
+        MainWindow.resize(435, 795)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gbr_load_image = QtWidgets.QGroupBox(self.centralwidget)
@@ -29,13 +29,16 @@ class Ui_MainWindow(object):
         self.scrollArea_filters = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea_filters.setGeometry(QtCore.QRect(10, 170, 421, 601))
         self.scrollArea_filters.setWidgetResizable(True)
-        self.scrollArea_filters.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.scrollArea_filters.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.scrollArea_filters.setObjectName("scrollArea_filters")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 419, 599))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.gridLayout = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
         self.gridLayout.setObjectName("gridLayout")
+        self.formLayout = QtWidgets.QFormLayout()
+        self.formLayout.setObjectName("formLayout")
+        self.gridLayout.addLayout(self.formLayout, 0, 0, 1, 1)
         self.scrollArea_filters.setWidget(self.scrollAreaWidgetContents)
         self.gbr_add_filter = QtWidgets.QGroupBox(self.centralwidget)
         self.gbr_add_filter.setGeometry(QtCore.QRect(10, 110, 421, 51))
@@ -70,13 +73,15 @@ class Ui_MainWindow(object):
         self.gbr_load_image.setTitle(_translate("MainWindow", "Carga de imagen"))
         self.btn_load_image.setText(_translate("MainWindow", "Cargar imagen"))
         self.lbl_load_image.setText(_translate("MainWindow", "..."))
+        # self.tl_group.setTitle(_translate("MainWindow", "Transformacion libre"))
+        # self.tl_btn_lines.setToolTip(_translate("MainWindow", "<html><head/><body><p>Dibujar linea</p></body></html>"))
+        # self.tl_btn_lines.setWhatsThis(_translate("MainWindow", "<html><head/><body><p>Dibujar linea</p></body></html>"))
         self.gbr_add_filter.setTitle(_translate("MainWindow", "Agregar filtros"))
         self.btn_delimite.setText(_translate("MainWindow", "Delimitar "))
         self.btn_color.setText(_translate("MainWindow", "Color"))
         self.btn_transformation.setText(_translate("MainWindow", "Transf. libre"))
         self.btn_perspective.setText(_translate("MainWindow", "Perspectiva"))
         self.btn_search.setText(_translate("MainWindow", "Busqueda"))
-
 
 if __name__ == "__main__":
     import sys
