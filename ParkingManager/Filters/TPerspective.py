@@ -289,10 +289,11 @@ class TPerspective:
         return verticals, horizontals
 
     def execute_perspective_transform(self):
-
-        # coordinates = np.float32([[[[798, 361], [1176, 355], [1203, 396], [771, 404]], [[654, 465], [1273, 457], [1357, 539], [572, 543]],
-        #   [[670, 545], [1356, 539], [1470, 654], [585, 670]], [[338, 787], [1600, 769], [1844, 1005], [134, 1012]]]])
-
+        """
+        Realiza la detección de espacios de parqueo según se requiere
+        :return:
+        """
+        mask = None
         cont = 0
 
         for c in self.coordinates[0]:
@@ -331,22 +332,46 @@ class TPerspective:
             TPerspective.draw_lines(empty_image, verticals_filtered, (255, 255, 255), 15, cont)
             TPerspective.draw_lines(empty_image, horizontals_filtered, (255, 255, 255), 15, cont)
 
+            # Detección de contornos
+            empty_image_bw = cv2.cvtColor(empty_image, cv2.COLOR_BGR2GRAY)
+            _, empty_image_bin = cv2.threshold(empty_image_bw, 100, 255, cv2.THRESH_BINARY)
+            contours, hierarchy = cv2.findContours(empty_image_bin, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+            # Encuentra los contornos:
+            internal_contours = []
+
+            # Filtra contornos hijos:
+            for i in range(len(contours)):
+                if hierarchy[0][i][3] == 0:
+                    internal_contours.append(contours[i])
+
+            # Formatea la imagen vacía de nuevo para dibujar contornos limpios
+            empty_image = np.zeros((self.tp_height, self.tp_width, 3), np.uint8)
+
+            if len(internal_contours) > 0:
+                cv2.drawContours(empty_image, internal_contours, -1, (0, 255, 0), 5)
+
             # Gira en caso de ser vertical.
             if not is_horizontal:
                 empty_image = np.rot90(empty_image, k=-1)
 
-            # Detección de contornos
-            empty_image_bw = cv2.cvtColor(empty_image, cv2.COLOR_BGR2GRAY)
-            _, empty_image_bin = cv2.threshold(empty_image_bw, 100, 255, cv2.THRESH_BINARY)
-            contours, _ = cv2.findContours(empty_image_bin, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-            if len(contours) > 0:
-                cv2.drawContours(empty_image, contours, -1, (0, 255, 0), 5)
-
             # Reversa la perspectiva
             back_perspective = cv2.warpPerspective(empty_image, m_inverse, (1919, 1079))
 
-            cv2.imshow(f'{cont}_Pruebas perspectiva', back_perspective)
+            # Genera la mascara
+            back_perspective_gray = cv2.cvtColor(back_perspective, cv2.COLOR_BGR2GRAY)
+            _, back_perspective_bin = cv2.threshold(back_perspective_gray, 100, 255, cv2.THRESH_BINARY)
+
+            if mask is None:
+                mask = back_perspective_bin
+            else:
+                mask = cv2.bitwise_or(back_perspective_bin, mask)
+
+            cv2.imshow(f'{cont}_Pruebas perspectiva', mask)
             # verticals_filtered = self.filter_bad_distances(verticals_filtered, 0.5, 0.9, transformed)
+
+        return mask
+
 
     @staticmethod
     def draw_lines(image, lines: list, color: tuple, thickness: int, counter: int):
@@ -385,9 +410,9 @@ class TPerspective:
             if i == len(lines) - 1:
                 clusters.append(base)
 
-        if is_horizontal:
-            pass
-            #clusters = filter(lambda x: (len(x) > 5), clusters)
+        # if is_horizontal:
+        #     pass
+        #     clusters = filter(lambda x: (len(x) > 5), clusters)
 
         # Calculate mean
         for c in clusters:
