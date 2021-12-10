@@ -299,7 +299,6 @@ class TPerspective:
         for c in self.coordinates[0]:
 
             tc = np.float32([c[0], c[1], c[3], c[2]])
-
             is_horizontal = True
 
             if TPerspective.is_horizontal(tc):
@@ -324,6 +323,8 @@ class TPerspective:
             verticals, horizontals = self.get_lines(transformed, 120)
             verticals_filtered = self.get_classified_lines_by_rho(verticals, self.vertical_tolerance, transformed, False)
             horizontals_filtered = self.get_classified_lines_by_rho(horizontals, self.horizontal_tolerance, transformed, True)
+
+            verticals_filtered = self.filter_bad_distances(verticals_filtered, 0.5, 0.9, transformed)
 
             # Imagen inversa en perspectiva
             empty_image = np.zeros((self.tp_height, self.tp_width, 3), np.uint8)
@@ -368,7 +369,6 @@ class TPerspective:
                 mask = cv2.bitwise_or(back_perspective_bin, mask)
 
             cv2.imshow(f'{cont}_Pruebas perspectiva', mask)
-            # verticals_filtered = self.filter_bad_distances(verticals_filtered, 0.5, 0.9, transformed)
 
         return mask
 

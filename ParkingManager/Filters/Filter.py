@@ -10,7 +10,8 @@ class FilterTypes(Enum):
     ColorSpace = 2,
     Delimite = 3,
     Transformation = 4,
-    PerspectiveTransformation = 5
+    PerspectiveTransformation = 5,
+    SpaceConfig = 6
 
 
 class Filter(ABC):
