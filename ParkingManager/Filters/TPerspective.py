@@ -372,7 +372,6 @@ class TPerspective:
 
         return mask
 
-
     @staticmethod
     def draw_lines(image, lines: list, color: tuple, thickness: int, counter: int):
         """
