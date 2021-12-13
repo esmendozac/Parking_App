@@ -9,18 +9,17 @@ from QTGraphicInterfaces.DynamicMainInterfaceForm import Ui_MainWindow as Ui
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Filters.Filter import Filter
 from Models.Picture import Picture as Pic
+from Models.Utils import Utils as Ut
 
 
+# noinspection SpellCheckingInspection
 class SpaceConfig:
     """
     Filtro que permite elegir específicamente zonas de una imagen para delimitar un estacionamiento
     """
 
-    def __init__(self, picture: Pic, ui: Ui, row: int, col: int, widget_id: int, initial_picture):
+    def __init__(self, picture: Pic, ui: Ui, row: int, col: int, widget_id: int):
 
-        print("Constructor de config")
-        # Imagen original
-        self.initial_picture = initial_picture
         self._original_picture = None
         self.set_original_picture(picture)
         self.picture = self.get_original_picture()
@@ -102,7 +101,30 @@ class SpaceConfig:
         self.ui.formLayout.setWidget(widget_id, QtWidgets.QFormLayout.FieldRole, ce_group)
 
     def view_mask(self):
-        cv2.imshow(f'{self.widget_id}_Configuración de espacios', self.initial_picture.content)
+
+        try:
+            # Binariza la mascara
+            original_bw = cv2.cvtColor(self.picture, cv2.COLOR_BGR2GRAY)
+            _, original_bin = cv2.threshold(original_bw, 100, 255, cv2.THRESH_BINARY)
+            contours, _ = cv2.findContours(original_bw, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+
+            # if len(contours) > 0:
+            #     cv2.drawContours(Ut.content, contours, -1, (0, 255, 0), cv2.FILLED)
+
+            # Dibuja el rectangulo:
+            for c in contours:
+                epsilon = 0.01 * cv2.arcLength(c, True)
+                approx = cv2.approxPolyDP(c, epsilon, True)
+
+                cv2.drawContours(Ut.content, [approx], -1, (0, 0, 255), cv2.FILLED)
+
+                print(f'Puntos: {len(approx)}')
+
+            cv2.imshow(f'{self.widget_id}_Espacios delimitados...', Ut.content)
+            cv2.imshow(f'{self.widget_id}_Mascara...', original_bin)
+
+        except Exception as ex:
+            raise Exception(ex)
 
     def set_original_picture(self, picture):
         self._original_picture = copy.deepcopy(picture)

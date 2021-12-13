@@ -4,6 +4,13 @@ import numpy as np
 
 class Utils:
 
+    content = []
+    path = ""
+
+    def __init__(self, path):
+        Utils.content = cv2.imread(path)
+        Utils.Path = path
+
     @staticmethod
     def get_pixel_values(picture, x, y):
         """

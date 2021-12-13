@@ -26,6 +26,7 @@ class TPerspective:
         self.ui = ui
         self.widget_id = widget_id
         self.draw_widget(row, col, widget_id)
+        self.mask = []
 
         # Parámetros funcionales
         self.tp_height = 500
@@ -350,7 +351,7 @@ class TPerspective:
             empty_image = np.zeros((self.tp_height, self.tp_width, 3), np.uint8)
 
             if len(internal_contours) > 0:
-                cv2.drawContours(empty_image, internal_contours, -1, (0, 255, 0), 5)
+                cv2.drawContours(empty_image, internal_contours, -1, (0, 255, 0), cv2.FILLED)
 
             # Gira en caso de ser vertical.
             if not is_horizontal:
@@ -370,7 +371,7 @@ class TPerspective:
 
             cv2.imshow(f'{cont}_Pruebas perspectiva', mask)
 
-        return mask
+        self.mask = mask
 
     @staticmethod
     def draw_lines(image, lines: list, color: tuple, thickness: int, counter: int):
@@ -542,5 +543,16 @@ class TPerspective:
             return True
         else:
             return False
+
+    def get_picture_filtered(self):
+
+        # Convierte la mascara en RGB
+        rgb_mask = cv2.cvtColor(self.mask, cv2.COLOR_GRAY2RGB)
+
+        picture = Pic()
+        picture.create_picture_from_content(rgb_mask)
+
+        # Genera la capa filtrada con la mascara adecuada
+        return picture
 
 

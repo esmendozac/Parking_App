@@ -6,6 +6,8 @@ from Models.Picture import Picture as Pic
 from Filters.Filter import FilterTypes, Filter
 from Filters.FactoryFilters import FactoryFilter as Ff
 from Filters.Delimite import Delimite as De
+from Models.Utils import Utils as Ut
+
 
 import sys
 import copy
@@ -55,10 +57,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.lbl_load_image.setText(file_name)
             self.picture = Pic()
             self.picture.create_picture_from_path(file_name)
-
             # Almacena imagen inicial
             self.set_original_picture(self.picture)
-
+            Ut.content = self.picture.content
+            Ut.path = self.picture.path
             # Asignaciones
             self.disable_all_buttons(False)
 
@@ -85,7 +87,7 @@ class MainWindow(QtWidgets.QMainWindow):
             last_filter = self.filters[-1]
             factory = Ff(last_filter.get_picture_filtered(), self.ui)
 
-        self.filters.append(factory.create_filter(filter_id, row, col, widget_id, last_filter, self.coordinates, self.get_original_picture()))
+        self.filters.append(factory.create_filter(filter_id, row, col, widget_id, last_filter, self.coordinates))
 
     def disable_all_buttons(self, state: bool):
         """

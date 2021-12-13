@@ -16,7 +16,7 @@ class FactoryFilter:
         self.ui = ui
         self.picture = picture
 
-    def create_filter(self, filter_id, row, col, widget_id, last_filter, coordinates, original_picture):
+    def create_filter(self, filter_id, row, col, widget_id, last_filter, coordinates):
         """
         Construye instancias de filtros
         :param filter_id:
@@ -37,7 +37,7 @@ class FactoryFilter:
         elif filter_id == FilterTypes.PerspectiveTransformation:
             return Tp(self.picture.content, self.ui, row, col, widget_id, coordinates)
         elif filter_id == FilterTypes.SpaceConfig:
-            return Sc(self.picture.content, self.ui, row, col, widget_id, original_picture)
+            return Sc(self.picture.content, self.ui, row, col, widget_id)
         else:
             raise Exception('No se pudo crear el filtro solicitado porque no existe en la enumeración')
 
