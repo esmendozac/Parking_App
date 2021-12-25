@@ -2,16 +2,17 @@ import cv2
 import numpy as np
 import copy
 from enum import Enum
-from Models import Utils
 
 from QTGraphicInterfaces.DynamicMainInterfaceForm import Ui_MainWindow as Ui
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Filters.Filter import Filter
 from Models.Picture import Picture as Pic
+from Models.Utils import Utils as Ut
 
 
 class DelimiteActions(Enum):
-    Coordinates = 0
+    Coordinates = 0,
+    Color = 1
 
 
 class Delimite(Filter):
@@ -20,7 +21,7 @@ class Delimite(Filter):
     """
     ui: Ui
 
-    def __init__(self, picture: Pic, ui: Ui, row: int, col: int, widget_id: int, color_selected=None):
+    def __init__(self, picture: Pic, ui: Ui, row: int, col: int, widget_id: int):
 
         # Imagen original
         self._original_picture = None
@@ -31,21 +32,14 @@ class Delimite(Filter):
         # Indica que el filtro fué finalizado
         self.is_done = False
         # Hereda el color de linea de un filtro anterior
-        self.color = {'r': 255, 'g': 255, 'b': 255}
+        self.color = Ut.get_line_color()
         # Acción por defecto
         self.action = DelimiteActions.Coordinates
-
-        # Hereda color de una capa externa
-        if color_selected is not None:
-            self.color = color_selected
-
         self.set_original_picture(picture)
         self.picture = self.get_original_picture()
         self.ui = ui
         self.draw_widget(row, col, widget_id)
         self.widget_id = widget_id
-
-        self.open_image()
 
     def draw_widget(self, row: int, col: int, widget_id: int):
         """
@@ -61,6 +55,30 @@ class Delimite(Filter):
         da_group.setMinimumSize(QtCore.QSize(0, 90))
         da_group.setObjectName(f'da_group_{widget_id}')
 
+        setattr(self.ui, f'da_btn_color_{widget_id}', QtWidgets.QPushButton(da_group))
+        da_btn_color = getattr(self.ui, f'da_btn_color_{widget_id}')
+        da_btn_color.setGeometry(QtCore.QRect(10, 30, 40, 40))
+        da_btn_color.setMinimumSize(QtCore.QSize(40, 40))
+        da_btn_color.setMaximumSize(QtCore.QSize(40, 40))
+        da_btn_color.setStyleSheet("border-color: rgb(255, 85, 0);")
+        da_btn_color.setText("")
+        icon_btn_color = QtGui.QIcon()
+        icon_btn_color.addPixmap(QtGui.QPixmap("icons/color.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        da_btn_color.setIcon(icon_btn_color)
+        da_btn_color.setIconSize(QtCore.QSize(32, 32))
+        da_btn_color.setObjectName(f'da_btn_color_{widget_id}')
+
+        setattr(self.ui, f'da_lbl_color_{widget_id}', QtWidgets.QLabel(da_group))
+        da_lbl_color = getattr(self.ui, f'da_lbl_color_{widget_id}')
+        da_lbl_color.setGeometry(QtCore.QRect(50, 30, 40, 40))
+        da_lbl_color.setMinimumSize(QtCore.QSize(40, 40))
+        da_lbl_color.setMaximumSize(QtCore.QSize(40, 40))
+        da_lbl_color.setAutoFillBackground(False)
+        da_lbl_color.setStyleSheet(f"background: rgb({self.color['r']}, {self.color['g']}, {self.color['b']});\n"
+                                        "border: 1px solid gray;")
+        da_lbl_color.setText("")
+        da_lbl_color.setObjectName(f'da_lbl_color_{widget_id}')
+
         setattr(self.ui, f'da_btn_clear_{widget_id}', QtWidgets.QPushButton(da_group))
         da_btn_clear = getattr(self.ui, f'da_btn_clear_{widget_id}')
         da_btn_clear.setGeometry(QtCore.QRect(300, 30, 40, 40))
@@ -75,7 +93,7 @@ class Delimite(Filter):
 
         setattr(self.ui, f'da_btn_coordinates_{widget_id}', QtWidgets.QPushButton(da_group))
         da_btn_coordinates = getattr(self.ui, f'da_btn_coordinates_{widget_id}')
-        da_btn_coordinates.setGeometry(QtCore.QRect(10, 30, 40, 40))
+        da_btn_coordinates.setGeometry(QtCore.QRect(90, 30, 40, 40))
         da_btn_coordinates.setMinimumSize(QtCore.QSize(40, 40))
         da_btn_coordinates.setMaximumSize(QtCore.QSize(40, 40))
         da_btn_coordinates.setStyleSheet("border-color: rgb(255, 85, 0);")
@@ -122,8 +140,31 @@ class Delimite(Filter):
 
         # Conexiones
         da_btn_coordinates.clicked.connect(lambda callback: self.set_action_button(DelimiteActions.Coordinates))
+        da_btn_color.clicked.connect(lambda callback: self.set_action_button(DelimiteActions.Color))
         da_btn_clear.clicked.connect(self.clean)
         da_btn_view.clicked.connect(self.view_zones)
+
+    def get_pixel_values(self, x, y):
+        """
+            Extrae valores RGB y HSV de una imagen especificada para una coordenada
+        """
+        # Extrae canales de forma independiente
+        b_ex, g_ex, r_ex = self.picture[:, :, 0], self.picture[:, :, 1], self.picture[:, :, 2]
+
+        r_val = r_ex[y][x]
+        g_val = g_ex[y][x]
+        b_val = b_ex[y][x]
+
+        # Conforma imagen rgb de 1px * 1px
+        rgb = np.array([[[r_val, g_val, b_val]]])
+        # Convierte el espacio de color H: 0 -> 179, S: 0 -> 255, V: -> 0 -> 255
+        hsv = cv2.cvtColor(rgb, cv2.COLOR_RGB2HSV)
+        # Extrae valores pixel a pixel
+        h_val = hsv[0][0][0]
+        s_val = hsv[0][0][1]
+        v_val = hsv[0][0][2]
+
+        return r_val, g_val, b_val, h_val, s_val, v_val
 
     def open_image(self):
         """
@@ -131,9 +172,9 @@ class Delimite(Filter):
         :return:
         """
         try:
-            cv2.imshow(f'{self.widget_id}_Dibujando imagen...', self.picture)
+            cv2.imshow(f'{self.widget_id}_Delimitar', self.picture)
             # Callback de eventos de mouse
-            cv2.setMouseCallback(f'{self.widget_id}_Dibujando imagen...', self.mouse_callback)
+            cv2.setMouseCallback(f'{self.widget_id}_Delimitar', self.mouse_callback)
         except Exception as ex:
             raise Exception(ex)
 
@@ -149,16 +190,14 @@ class Delimite(Filter):
         """
 
         if self.action == DelimiteActions.Coordinates:
+
             if event == cv2.EVENT_LBUTTONDOWN:
                 # Cada punto dibujado es una coordenada almacenada y dibujada
                 self.add_limit_coordinate(x, y, is_last=False)
-                cv2.circle(self.picture, (x, y), 3, (int(self.color['b']), int(self.color['g']),int(self.color['r'])),
+                cv2.circle(self.picture, (x, y), 3, (int(self.color['b']), int(self.color['g']), int(self.color['r'])),
                            -1)
                 # Actualiza la imagen mostrada
-                cv2.imshow(f'{self.widget_id}_Dibujando imagen...', self.picture)
-
-            # control + click añade una nueva zona delimitada
-            elif event == cv2.EVENT_MBUTTONDBLCLK:
+                cv2.imshow(f'{self.widget_id}_Delimitar', self.picture)
 
                 # Crea una zona delimitada
                 if len(self.limits[-1]) > 3:
@@ -175,10 +214,25 @@ class Delimite(Filter):
 
                     # Dibuja el contorno en la imagen original
                     cv2.drawContours(self.picture, contours, -1,
-                                     (int(self.color['b']), int(self.color['g']),int(self.color['r'])), 2)
+                                     (int(self.color['b']), int(self.color['g']), int(self.color['r'])), 4)
                     # Muestra el contorno
-                    cv2.imshow(f'{self.widget_id}_Dibujando imagen...', self.picture)
+                    cv2.imshow(f'{self.widget_id}_Delimitar', self.picture)
 
+        elif self.action == DelimiteActions.Color:
+            if event == cv2.EVENT_LBUTTONDBLCLK:
+                # Extrae valores de pixel de la imagen
+                r, g, b, h, s, v = self.get_pixel_values(x, y)
+                # Actualiza el color
+                self.color['r'] = r
+                self.color['g'] = g
+                self.color['b'] = b
+
+                # Almacena el color en memoria estática
+                Ut.set_line_color(r, g, b)
+
+                # Visualiza el color extraído en el label
+                da_lbl_color = getattr(self.ui, f'da_lbl_color_{self.widget_id}')
+                da_lbl_color.setStyleSheet(f"background: rgb({r}, {g}, {b} );\n""border: 1px solid black;")
         else:
             pass
 
@@ -190,8 +244,19 @@ class Delimite(Filter):
         """
         self.action = action
 
+        # Consulta los botones
+        da_btn_color = getattr(self.ui, f'da_btn_color_{self.widget_id}')
+        da_btn_coordinates = getattr(self.ui, f'da_btn_coordinates_{self.widget_id}')
+
+        # Modificación de bordes en botones
         if action == DelimiteActions.Coordinates:
-            self.open_image()
+            da_btn_color.setStyleSheet("")
+            da_btn_coordinates.setStyleSheet("background-color: rgb(109, 255, 231);")
+        elif action == DelimiteActions.Color:
+            da_btn_color.setStyleSheet("background-color: rgb(109, 255, 231);")
+            da_btn_coordinates.setStyleSheet("")
+
+        self.open_image()
 
     def draw_points_callback(self, event, x, y, flags, param):
         """
@@ -225,7 +290,6 @@ class Delimite(Filter):
                 mask = cv2.drawContours(mask, contours, -1, 255, -1)
                 # Almacena la mascara en la imagen
                 self.masks.append(mask)
-
                 # Dibuja el contorno en la imagen original
                 cv2.drawContours(self.picture, contours, -1,
                                  (int(self.color['r']), int(self.color['g']), int(self.color['b'])), 2)
@@ -239,12 +303,6 @@ class Delimite(Filter):
         """
         cv2.imshow(f'{self.widget_id}_Zonas delimitadas', self.get_picture_filtered().content)
 
-        # Bloquea edición del filtro
-        # getattr(self.ui, f'dz_btn_draw_zone_{self.widget_id}').setDisabled(True)
-        # getattr(self.ui, f'dz_cbx_executed_{self.widget_id}').setCheckState(QtCore.Qt.Checked)
-        # self.is_done = True
-        # self.set_ext_btn_state(True)
-
     def clean(self):
         """
         Limpieza de las zonas en el objeto imagen y en la interfaz gráfica
@@ -253,6 +311,7 @@ class Delimite(Filter):
         self.limits = [[]]
         self.masks = []
         self.picture = self.get_original_picture()
+        self.open_image()
 
     def add_limit_coordinate(self, x, y, is_last):
 
@@ -300,17 +359,10 @@ class Delimite(Filter):
         mask = self.get_all_masks_limits()
 
         picture = Pic()
-        image_with_contours = cv2.bitwise_and(self.get_original_picture(), self.get_original_picture(), mask=mask)
-
-        # for limit in filter(lambda c: len(c) > 0, self.limits):
-        #     contours = np.array([limit])
-        #     # Dibuja el contorno en la imagen original
-        #     cv2.drawContours(image_with_contours, contours, -1,
-        #                      (int(self.color['r']), int(self.color['g']), int(self.color['b'])), 2)
-
+        # Sin bordes
+        # image_with_contours = cv2.bitwise_and(self.get_original_picture(), self.get_original_picture(), mask=mask)
+        image_with_contours = cv2.bitwise_and(self.picture, self.picture, mask=mask)
         picture.create_picture_from_content(image_with_contours)
-
-        print(self.get_coordinates())
 
         # Genera la capa filtrada con la mascara adecuada
         return picture
@@ -327,4 +379,3 @@ class Delimite(Filter):
         :return:
         """
         return [l for l in self.limits if len(l) > 0]
-

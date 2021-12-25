@@ -3,13 +3,17 @@ import numpy as np
 import copy
 import math
 from enum import Enum
-from Models import Utils
+
 
 from QTGraphicInterfaces.DynamicMainInterfaceForm import Ui_MainWindow as Ui
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Filters.Filter import Filter
 from Models.Picture import Picture as Pic
 from Models.Utils import Utils as Ut
+
+# Negocio
+from Bussiness.Models.Calibration import Calibration as Calibration
+from Bussiness.Models.DefinedSpace import DefinedSpace as DefinedSpace
 
 
 # noinspection SpellCheckingInspection
@@ -20,13 +24,16 @@ class SpaceConfig:
 
     def __init__(self, picture: Pic, ui: Ui, row: int, col: int, widget_id: int):
 
+        # Creación de la calibración
+        self.calibration = Calibration(1, 1, True)
+
         self._original_picture = None
         self.set_original_picture(picture)
         self.picture = self.get_original_picture()
         self.ui = ui
         self.widget_id = widget_id
         self.draw_widget(row, col, widget_id)
-        self.view_mask()
+        self.generate_spaces()
 
     def draw_widget(self, row: int, col: int, widget_id: int):
         """
@@ -99,29 +106,34 @@ class SpaceConfig:
         ce_btn_start.setToolTip(_translate("MainWindow", "<html><head/><body><p>Dibujar coordenadas</p></body></html>"))
 
         self.ui.formLayout.setWidget(widget_id, QtWidgets.QFormLayout.FieldRole, ce_group)
+        ce_btn_start.clicked.connect(lambda callback: self.generate_spaces())
 
-    def view_mask(self):
+    def generate_spaces(self):
 
         try:
+            # Extrae la imagen inicial
+            initial_image = Ut.get_original_image_content()
+
             # Binariza la mascara
             original_bw = cv2.cvtColor(self.picture, cv2.COLOR_BGR2GRAY)
             _, original_bin = cv2.threshold(original_bw, 100, 255, cv2.THRESH_BINARY)
             contours, _ = cv2.findContours(original_bw, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-
-            # if len(contours) > 0:
-            #     cv2.drawContours(Ut.content, contours, -1, (0, 255, 0), cv2.FILLED)
 
             # Dibuja el rectangulo:
             for c in contours:
                 epsilon = 0.01 * cv2.arcLength(c, True)
                 approx = cv2.approxPolyDP(c, epsilon, True)
 
-                cv2.drawContours(Ut.content, [approx], -1, (0, 0, 255), cv2.FILLED)
+                cv2.drawContours(initial_image, [approx], -1, (0, 0, 255), cv2.FILLED)
 
-                print(f'Puntos: {len(approx)}')
+                print(f'Puntos: {len(approx)}, approx: {str(approx[0][0])}')
+                ds = DefinedSpace(approx, True, "Normal space")
+                self.calibration.add_defined_space(ds)
 
-            cv2.imshow(f'{self.widget_id}_Espacios delimitados...', Ut.content)
+            cv2.imshow(f'{self.widget_id}_Espacios delimitados...', initial_image)
             cv2.imshow(f'{self.widget_id}_Mascara...', original_bin)
+
+            print(self.calibration.serialize())
 
         except Exception as ex:
             raise Exception(ex)

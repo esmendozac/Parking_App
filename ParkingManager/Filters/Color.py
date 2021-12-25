@@ -6,6 +6,7 @@ from QTGraphicInterfaces.DynamicMainInterfaceForm import Ui_MainWindow as Ui
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Filters.Filter import Filter
 from Models.Picture import Picture as Pic
+from Models.Utils import Utils as Ut
 
 
 class ColorActions(Enum):
@@ -21,7 +22,7 @@ class Color(Filter):
         # Indica que el filtro fué finalizado
         self.is_done = False
         # Para extraer el color
-        self.color = {'r': 255, 'g': 255, 'b': 255}
+        self.color = Ut.get_line_color()
         self.set_original_picture(picture)
         self.picture = self.get_original_picture()
         self.ui = ui
@@ -31,6 +32,10 @@ class Color(Filter):
         self.hsv = []
         # Sliders
         self.slider_values = {'h_low': 0, 'h_high': 0, 's_low': 0, 's_high': 0, 'v_low': 0, 'v_high': 0}
+
+        # Ejecuta por herencia de color
+        self.capture_lines_color_event()
+        self.set_sliders_state(True)
 
     def draw_widget(self, row: int, col: int, widget_id: int):
 
@@ -164,7 +169,7 @@ class Color(Filter):
         ml_lbl_color.setMinimumSize(QtCore.QSize(38, 38))
         ml_lbl_color.setMaximumSize(QtCore.QSize(38, 38))
         ml_lbl_color.setAutoFillBackground(False)
-        ml_lbl_color.setStyleSheet("background: rgb(255, 255, 255);\n"
+        ml_lbl_color.setStyleSheet(f"background: rgb({self.color['r']}, {self.color['g']}, {self.color['b']});\n"
                                         "border: 1px solid gray;")
         ml_lbl_color.setText("")
         ml_lbl_color.setObjectName(f'ml_lbl_color_{widget_id}')
@@ -293,6 +298,24 @@ class Color(Filter):
 
         except Exception as ex:
             raise Exception(ex)
+
+
+    def get_hsv_from_rgb(self):
+        """
+        Convierte un pixel rgb a hsv
+        :return:
+        """
+
+        # Conforma imagen rgb de 1px * 1px
+        rgb = np.array([[[self.color['r'], self.color['g'], self.color['b']]]])
+        # Convierte el espacio de color H: 0 -> 179, S: 0 -> 255, V: -> 0 -> 255
+        hsv = cv2.cvtColor(rgb, cv2.COLOR_RGB2HSV)
+        # Extrae valores pixel a pixel
+        h = hsv[0][0][0]
+        s = hsv[0][0][1]
+        v = hsv[0][0][2]
+
+        return h, s, v
 
     def get_pixel_values(self, x, y):
         """
@@ -506,7 +529,15 @@ class Color(Filter):
         return result
 
     def capture_lines_color_callback(self, event, x, y, flags, param):
-
+        """
+        Generación de mascara sobre el pixel xy
+        :param event:
+        :param x:
+        :param y:
+        :param flags:
+        :param param:
+        :return:
+        """
         if event == cv2.EVENT_LBUTTONDBLCLK:
             # Extrae valores de pixel de la imagen
             r, g, b, h, s, v = self.get_pixel_values(x, y)
@@ -514,6 +545,10 @@ class Color(Filter):
             self.color['r'] = r
             self.color['g'] = g
             self.color['b'] = b
+
+            # Almacena el color en memoria estática
+            Ut.set_line_color(r, g, b)
+            
             # Visualiza el color extraído en el label
             ml_lbl_color = getattr(self.ui, f'ml_lbl_color_{self.widget_id}')
             ml_lbl_color.setStyleSheet(f"background: rgb({r}, {g}, {b} );\n""border: 1px solid black;")
@@ -525,6 +560,21 @@ class Color(Filter):
             res_hsv = cv2.bitwise_and(self.picture, self.picture, mask=self.mask)
             # Filtro de color de lineas
             cv2.imshow('Filtro de color de lineas aplicado...', res_hsv)
+
+    def capture_lines_color_event(self):
+        """
+        Generación de mascara sobre el color heredado
+        :return:
+        """
+        h, s, v = self.get_hsv_from_rgb()
+        # Cambia espacio de color
+        self.hsv = cv2.cvtColor(self.picture, cv2.COLOR_BGR2HSV)
+        # Calcula la mascara
+        self.mask = self.calculate_hsv_mask(self.hsv, h, s, v, tolerance=10)
+        # AND entre las dos mascaras
+        res_hsv = cv2.bitwise_and(self.picture, self.picture, mask=self.mask)
+        # Filtro de color de lineas
+        cv2.imshow('Filtro de color de lineas aplicado...', res_hsv)
 
     def clean(self):
         pass

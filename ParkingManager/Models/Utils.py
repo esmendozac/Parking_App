@@ -1,15 +1,60 @@
 import cv2
 import numpy as np
+import copy
+
+# Negocio
+from Bussiness.Models.DefinedSpace import DefinedSpace as DefinedSpace
 
 
 class Utils:
 
+    # Contenido de la imagen original
     content = []
     path = ""
+
+    # Color detallado
+    color = {'r': 255, 'g': 255, 'b': 255}
 
     def __init__(self, path):
         Utils.content = cv2.imread(path)
         Utils.Path = path
+
+    @staticmethod
+    def get_original_image_content():
+        """
+        Obtiene una copia de la imagen original.
+        :return:
+        """
+        return copy.deepcopy(Utils.content)
+
+    @staticmethod
+    def set_original_image_content(content):
+        """
+        Obtiene una copia de la imagen original.
+        :return:
+        """
+        Utils.content = copy.deepcopy(content)
+
+    @staticmethod
+    def get_line_color():
+        """
+        Retorna el color seleccionado
+        :return:
+        """
+        return Utils.color
+
+    @staticmethod
+    def set_line_color(r, g, b):
+        """
+        Aplica el color seleccionado
+        :param r:
+        :param g:
+        :param b:
+        :return:
+        """
+        Utils.color["r"] = r
+        Utils.color["g"] = g
+        Utils.color["b"] = b
 
     @staticmethod
     def get_pixel_values(picture, x, y):

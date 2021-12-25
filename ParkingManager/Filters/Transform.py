@@ -2,12 +2,13 @@ import cv2
 import numpy as np
 import copy
 from enum import Enum
-from Models import Utils
+
 
 from QTGraphicInterfaces.DynamicMainInterfaceForm import Ui_MainWindow as Ui
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Filters.Filter import Filter
 from Models.Picture import Picture as Pic
+from Models.Utils import Utils as Ut
 
 
 class TransformActions(Enum):
@@ -33,7 +34,7 @@ class Transform(Filter):
         # Indica que el filtro fué finalizado
         self.is_done = False
         # Hereda el color de linea de un filtro anterior
-        self.color = {'r': 255, 'g': 255, 'b': 255}
+        self.color = Ut.get_line_color()
         # Grosor de herramienta
         self.thickness = 3
         # Acción por defecto
@@ -60,13 +61,6 @@ class Transform(Filter):
         :param widget_id:
         :return:
         """
-
-        # setattr(self.ui, f'tl_frame_{widget_id}', QtWidgets.QFrame(self.ui.scrollAreaWidgetContents))
-        # tl_frame = getattr(self.ui, f'tl_frame_{widget_id}')
-        # tl_frame.setEnabled(True)
-        # tl_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        # tl_frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        # tl_frame.setObjectName(f'tl_frame_{widget_id}')
 
         setattr(self.ui, f'tl_group_{widget_id}', QtWidgets.QGroupBox(self.ui.scrollAreaWidgetContents))
         tl_group = getattr(self.ui, f'tl_group_{widget_id}')
@@ -117,7 +111,6 @@ class Transform(Filter):
         tl_btn_color.setGeometry(QtCore.QRect(90, 30, 40, 40))
         tl_btn_color.setMinimumSize(QtCore.QSize(40, 40))
         tl_btn_color.setMaximumSize(QtCore.QSize(40, 40))
-        tl_btn_color.setStyleSheet("border-color: rgb(255, 85, 0);")
         tl_btn_color.setText("")
         icon_btn_color = QtGui.QIcon()
         icon_btn_color.addPixmap(QtGui.QPixmap("icons/color.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -143,7 +136,7 @@ class Transform(Filter):
         tl_lbl_color.setMinimumSize(QtCore.QSize(38, 38))
         tl_lbl_color.setMaximumSize(QtCore.QSize(38, 38))
         tl_lbl_color.setAutoFillBackground(False)
-        tl_lbl_color.setStyleSheet("background: rgb(255, 255, 255);\n"
+        tl_lbl_color.setStyleSheet(f"background: rgb({self.color['r']}, {self.color['g']}, {self.color['b']});\n"
                                    "border: 1px solid gray;")
         tl_lbl_color.setText("")
         tl_lbl_color.setObjectName(f'tl_lbl_color_{widget_id}')
@@ -275,12 +268,15 @@ class Transform(Filter):
         elif self.action == TransformActions.ColorPick:
             if event == cv2.EVENT_LBUTTONDBLCLK:
                 # Extrae valores de pixel de la imagen
-                r, g, b, h, s, v = Utils.Utils.get_pixel_values(self.picture, x, y)
+                r, g, b, h, s, v = Ut.get_pixel_values(self.picture, x, y)
 
                 # Actualiza el color
                 self.color['r'] = r
                 self.color['g'] = g
                 self.color['b'] = b
+
+                Ut.set_line_color(r, g, b)
+
                 # Visualiza el color extraído en el label
                 tl_lbl_color = getattr(self.ui, f'tl_lbl_color_{self.widget_id}')
                 tl_lbl_color.setStyleSheet(f"background: rgb({self.color['r']}, {self.color['g']}, "
