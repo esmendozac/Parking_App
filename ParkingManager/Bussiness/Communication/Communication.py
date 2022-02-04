@@ -19,5 +19,4 @@ class Communication:
 
     def get_user(self, user_id):
         user = self.integration.get(f"usuario/{user_id}")
-
         print(user)
