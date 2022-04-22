@@ -103,7 +103,7 @@ class TPerspective:
         tp_sb_v_lines = getattr(self.ui, f'tp_sb_v_lines_{widget_id}')
         tp_sb_v_lines.setGeometry(QtCore.QRect(80, 40, 42, 20))
         tp_sb_v_lines.setMinimum(1)
-        tp_sb_v_lines.setMaximum(40)
+        tp_sb_v_lines.setMaximum(60)
         tp_sb_v_lines.setProperty("value", 20)
         tp_sb_v_lines.setObjectName(f'tp_sb_v_lines_{widget_id}')
 
@@ -111,7 +111,7 @@ class TPerspective:
         tp_sb_h_lines = getattr(self.ui, f'tp_sb_h_lines_{widget_id}')
         tp_sb_h_lines.setGeometry(QtCore.QRect(20, 40, 42, 20))
         tp_sb_h_lines.setMinimum(1)
-        tp_sb_h_lines.setMaximum(40)
+        tp_sb_h_lines.setMaximum(60)
         tp_sb_h_lines.setProperty("value", 15)
         tp_sb_h_lines.setObjectName(f'tp_sb_h_lines_{widget_id}')
 
