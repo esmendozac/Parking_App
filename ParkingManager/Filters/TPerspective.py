@@ -36,6 +36,16 @@ class TPerspective:
         self.horizontal_tolerance = 15
         self.vertical_tolerance = 20
 
+    def set_visible(self, state):
+        """
+        Cambia la visibilidad de un filtro
+        :param state:
+        :return:
+        """
+        # Recupera el widget y aplica lógica
+        group = getattr(self.ui, f'tp_group_{self.widget_id}')
+        group.setVisible(state)
+
     def draw_widget(self, row: int, col: int, widget_id: int):
         """
         Renderiza el widget del filtro en la pantallaS

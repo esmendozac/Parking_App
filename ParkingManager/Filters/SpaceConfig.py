@@ -1,19 +1,24 @@
 import cv2
 import numpy as np
 import copy
+import json
 import math
 from enum import Enum
 
 
 from QTGraphicInterfaces.DynamicMainInterfaceForm import Ui_MainWindow as Ui
 from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5.QtWidgets import QFileDialog
 from Filters.Filter import Filter
 from Models.Picture import Picture as Pic
 from Models.Utils import Utils as Ut
 
 # Negocio
-from Bussiness.Models.Calibration import Calibration as Calibration
+from Bussiness.Models.Lote import Lote as Lote
 from Bussiness.Models.DefinedSpace import DefinedSpace as DefinedSpace
+
+# Integración
+from Integration.ParkingApi import ParkingApi as ParkingApi
 
 
 # noinspection SpellCheckingInspection
@@ -22,18 +27,32 @@ class SpaceConfig:
     Filtro que permite elegir específicamente zonas de una imagen para delimitar un estacionamiento
     """
 
-    def __init__(self, picture: Pic, ui: Ui, row: int, col: int, widget_id: int):
+    def __init__(self, picture: Pic, ui: Ui, row: int, col: int, widget_id: int, context):
 
-        # Creación de la calibración
-        self.calibration = Calibration(1, 1, True)
-
+        # Creación del lote
+        self.lot = Lote("Test parking", "90005648", "testparking@emeal.com", "yUASMNAASASCASC", "KUASLACSPOASCAC")
         self._original_picture = None
         self.set_original_picture(picture)
         self.picture = self.get_original_picture()
         self.ui = ui
+        self.context = context
         self.widget_id = widget_id
         self.draw_widget(row, col, widget_id)
         self.generate_spaces()
+        self.json_info = {}
+
+        # Conexiones fijas
+        self.ui.btn_save_json.clicked.connect(lambda callback: self.save_json_file())
+
+    def set_visible(self, state):
+        """
+        Cambia la visibilidad de un filtro
+        :param state:
+        :return:
+        """
+        # Recupera el widget y aplica lógica
+        group = getattr(self.ui, f'ce_group_{self.widget_id}')
+        group.setVisible(state)
 
     def draw_widget(self, row: int, col: int, widget_id: int):
         """
@@ -119,24 +138,59 @@ class SpaceConfig:
             _, original_bin = cv2.threshold(original_bw, 100, 255, cv2.THRESH_BINARY)
             contours, _ = cv2.findContours(original_bw, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
+            index = 0
+
             # Dibuja el rectangulo:
             for c in contours:
                 epsilon = 0.01 * cv2.arcLength(c, True)
                 approx = cv2.approxPolyDP(c, epsilon, True)
 
-                cv2.drawContours(initial_image, [approx], -1, (0, 0, 255), cv2.FILLED)
+                moment = cv2.moments(c)
+                centrer_x = int(moment["m10"] / moment["m00"])
+                center_y = int(moment["m01"] / moment["m00"])
+
+                index += 1
+
+                # Dibuja el contorno por defecto
+                cv2.drawContours(image=initial_image, contours=[approx], thickness=2, color=(0, 255, 0),
+                                 lineType=cv2.LINE_AA, contourIdx=-1)
+                # Texto que enumera el espacio
+                cv2.putText(initial_image, f"{index}", (centrer_x - 20, center_y - 20),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
                 print(f'Puntos: {len(approx)}, approx: {str(approx[0][0])}')
-                ds = DefinedSpace(approx, True, "Normal space")
-                self.calibration.add_defined_space(ds)
+                ds = DefinedSpace(approx, True, "Normal space", index)
+                self.lot.add_defined_space(ds)
 
             cv2.imshow(f'{self.widget_id}_Espacios delimitados...', initial_image)
-            cv2.imshow(f'{self.widget_id}_Mascara...', original_bin)
+            # cv2.imshow(f'{self.widget_id}_Mascara...', original_bin)
 
-            print(self.calibration.serialize())
+            # Habilita botón
+            self.ui.btn_save_json.setDisabled(False)
+            print(self.lot.serialize())
 
         except Exception as ex:
             raise Exception(ex)
+
+    def save_json_file(self):
+        """
+        Almacena el espaciop configurado
+        :return:
+        """
+        json_file_path, _ = QFileDialog.getSaveFileName(self.context, self.context.tr("Guardar configuración..."), ".", self.context.tr("Archivos JSON "
+                                                                                                      "(*.json)"))
+
+        with open(json_file_path, 'w') as fp:
+            json.dump(self.lot.get_dict(), fp)
+
+        print(f"File name: {json_file_path}")
+
+        self.save_json_data()
+
+    def save_json_data(self):
+
+        api = ParkingApi()
+        api.create_parking(self.lot.get_dict())
 
     def set_original_picture(self, picture):
         self._original_picture = copy.deepcopy(picture)

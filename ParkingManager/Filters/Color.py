@@ -37,6 +37,16 @@ class Color(Filter):
         self.capture_lines_color_event()
         self.set_sliders_state(True)
 
+    def set_visible(self, state):
+        """
+        Cambia la visibilidad de un filtro
+        :param state:
+        :return:
+        """
+        # Recupera el widget y aplica lógica
+        group = getattr(self.ui, f'ml_group_{self.widget_id}')
+        group.setVisible(state)
+
     def draw_widget(self, row: int, col: int, widget_id: int):
 
         setattr(self.ui, f'ml_group_{widget_id}', QtWidgets.QGroupBox(self.ui.scrollAreaWidgetContents))

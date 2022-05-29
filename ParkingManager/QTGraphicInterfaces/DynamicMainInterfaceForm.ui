@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>435</width>
-    <height>795</height>
+    <width>442</width>
+    <height>864</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Editor</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QGroupBox" name="gbr_load_image">
@@ -60,9 +60,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>170</y>
+      <y>480</y>
       <width>421</width>
-      <height>601</height>
+      <height>291</height>
      </rect>
     </property>
     <property name="widgetResizable">
@@ -77,70 +77,12 @@
        <x>0</x>
        <y>0</y>
        <width>419</width>
-       <height>599</height>
+       <height>289</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
-       <layout class="QFormLayout" name="formLayout">
-        <item row="0" column="1">
-         <widget class="QGroupBox" name="tl_group">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>90</height>
-           </size>
-          </property>
-          <property name="title">
-           <string>Transformacion libre</string>
-          </property>
-          <widget class="QPushButton" name="tl_btn_lines">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>30</y>
-             <width>40</width>
-             <height>40</height>
-            </rect>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>40</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>40</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dibujar linea&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="whatsThis">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dibujar linea&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border-color: rgb(255, 85, 0);</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normaloff>../icons/lineas.png</normaloff>../icons/lineas.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-          </widget>
-         </widget>
-        </item>
-       </layout>
+       <layout class="QFormLayout" name="formLayout"/>
       </item>
      </layout>
     </widget>
@@ -149,7 +91,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>110</y>
+      <y>420</y>
       <width>421</width>
       <height>51</height>
      </rect>
@@ -223,6 +165,140 @@
      </property>
      <property name="text">
       <string>Busqueda</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="gbr_end">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>790</y>
+      <width>421</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Guardar configuración</string>
+    </property>
+    <property name="checkable">
+     <bool>false</bool>
+    </property>
+    <widget class="QPushButton" name="btn_save_json">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>101</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Generar JSON</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="gbr_info">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>110</y>
+      <width>421</width>
+      <height>311</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Información</string>
+    </property>
+    <widget class="QLineEdit" name="txb_identifier">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>30</y>
+       <width>301</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="gbr_lbl_identifier">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>101</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Identificador único</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="gbr_lbl_name">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>90</y>
+       <width>51</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Nombre*</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txb_name">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>90</y>
+       <width>331</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="gbr_lbl_address">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>120</y>
+       <width>51</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Dirección</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txb_address">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>120</y>
+       <width>331</width>
+       <height>20</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="gbr_lbl_token">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>51</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Token</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="txb_token">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>60</y>
+       <width>301</width>
+       <height>20</height>
+      </rect>
      </property>
     </widget>
    </widget>

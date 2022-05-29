@@ -35,3 +35,7 @@ class Filter(ABC):
     @abstractmethod
     def clean(self):
         pass
+
+    @abstractmethod
+    def set_visible(self, state: bool):
+        pass

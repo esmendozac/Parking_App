@@ -41,6 +41,16 @@ class Delimite(Filter):
         self.draw_widget(row, col, widget_id)
         self.widget_id = widget_id
 
+    def set_visible(self, state):
+        """
+        Cambia la visibilidad de un filtro
+        :param state:
+        :return:
+        """
+        # Recupera el widget y aplica lógica
+        group = getattr(self.ui, f'da_group_{self.widget_id}')
+        group.setVisible(state)
+
     def draw_widget(self, row: int, col: int, widget_id: int):
         """
         Renderiza el widget del filtro en la pantalla

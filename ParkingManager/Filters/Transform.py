@@ -53,6 +53,16 @@ class Transform(Filter):
         # Lineas
         self.line_coordinates = [None, None]
 
+    def set_visible(self, state):
+        """
+        Cambia la visibilidad de un filtro
+        :param state:
+        :return:
+        """
+        # Recupera el widget y aplica lógica
+        group = getattr(self.ui, f'tl_group_{self.widget_id}')
+        group.setVisible(state)
+
     def draw_widget(self, row: int, col: int, widget_id: int):
         """
         Renderiza el widget del filtro en la pantalla

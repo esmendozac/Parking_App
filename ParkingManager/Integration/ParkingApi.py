@@ -21,3 +21,18 @@ class ParkingApi:
         except:
             ex = "Error al consultar usuario -> HttpResponsed: " + r.status_code
             raise Exception(ex)
+
+    def create_parking(self, parking):
+
+        try:
+            headers = {'Content-type': 'application/json'}
+
+            r = requests.post(self.base_api + f'CrearLote', data=json.dumps(parking), headers=headers)
+
+            return r.status_code == 200
+
+        except:
+            ex = "Error al crear el lote -> HttpResponsed: " + r.status_code
+            raise Exception(ex)
+
+
