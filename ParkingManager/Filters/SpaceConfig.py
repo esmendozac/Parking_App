@@ -30,7 +30,7 @@ class SpaceConfig:
     def __init__(self, picture: Pic, ui: Ui, row: int, col: int, widget_id: int, context):
 
         # Creación del lote
-        self.lot = Lote("Test parking", "90005648", "testparking@emeal.com", "yUASMNAASASCASC", "KUASLACSPOASCAC")
+        self.lot = Lote()
         self._original_picture = None
         self.set_original_picture(picture)
         self.picture = self.get_original_picture()
@@ -179,6 +179,12 @@ class SpaceConfig:
         """
         json_file_path, _ = QFileDialog.getSaveFileName(self.context, self.context.tr("Guardar configuración..."), ".", self.context.tr("Archivos JSON "
                                                                                                       "(*.json)"))
+
+        # Actualiza la información escrita en los textbox
+        self.lot.update_property("Nombre", self.ui.txb_name.text())
+        self.lot.update_property("Identificador", self.ui.txb_identifier.text())
+        self.lot.update_property("Token", self.ui.txb_token.text())
+        self.lot.update_property("Direccion", self.ui.txb_address.text())
 
         with open(json_file_path, 'w') as fp:
             json.dump(self.lot.get_dict(), fp)

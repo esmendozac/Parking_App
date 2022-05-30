@@ -5,13 +5,12 @@ from Bussiness.Models.DefinedSpace import DefinedSpace as DefinedSpace
 
 class Lote:
 
-    def __init__(self, name, nit, email, identifier, token):
+    def __init__(self):
         self.IdLote = None
-        self.Nombre = name
-        self.Nit = nit
-        self.Email = email
-        self.Identificador = identifier
-        self.Token = token
+        self.Nombre = ""
+        self.Identificador = ""
+        self.Token = ""
+        self.Direccion = ""
         self.EspaciosDelimitados: list = []
 
     def add_defined_space(self, defined_space: DefinedSpace):
@@ -22,15 +21,24 @@ class Lote:
         """
         self.EspaciosDelimitados.append(defined_space)
 
+    def update_property(self, parameter, value):
+        """
+        Actualización dinámica de propiedades de la clase externamente
+        :param parameter:
+        :param value:
+        :return:
+        """
+        attr = getattr(self, parameter)
+        setattr(self, parameter, value)
+
     def get_dict(self):
 
         dict = {
             "IdLote": self.IdLote,
             "Nombre": self.Nombre,
-            "Nit": self.Nit,
-            "Email": self.Email,
             "Identificador": self.Identificador,
             "Token": self.Token,
+            "Direccion": self.Direccion,
             "EspaciosDelimitados": []
         }
 

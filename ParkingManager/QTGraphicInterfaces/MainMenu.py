@@ -32,11 +32,14 @@ class Ui_MainWindow(object):
         self.op_group.setGeometry(QtCore.QRect(10, 120, 461, 71))
         self.op_group.setObjectName("op_group")
         self.op_btn_start = QtWidgets.QPushButton(self.op_group)
-        self.op_btn_start.setGeometry(QtCore.QRect(90, 30, 75, 23))
+        self.op_btn_start.setGeometry(QtCore.QRect(110, 30, 75, 23))
         self.op_btn_start.setObjectName("op_btn_start")
-        self.op_btn_load = QtWidgets.QPushButton(self.op_group)
-        self.op_btn_load.setGeometry(QtCore.QRect(10, 30, 75, 23))
-        self.op_btn_load.setObjectName("op_btn_load")
+        self.op_txb_id = QtWidgets.QLineEdit(self.op_group)
+        self.op_txb_id.setGeometry(QtCore.QRect(40, 30, 61, 20))
+        self.op_txb_id.setObjectName("op_txb_id")
+        self.op_lbl_id = QtWidgets.QLabel(self.op_group)
+        self.op_lbl_id.setGeometry(QtCore.QRect(20, 30, 16, 21))
+        self.op_lbl_id.setObjectName("op_lbl_id")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -54,7 +57,7 @@ class Ui_MainWindow(object):
         self.cfg_btn_delete.setText(_translate("MainWindow", "Eliminar"))
         self.op_group.setTitle(_translate("MainWindow", "Operación"))
         self.op_btn_start.setText(_translate("MainWindow", "Iniciar"))
-        self.op_btn_load.setText(_translate("MainWindow", "Cargar"))
+        self.op_lbl_id.setText(_translate("MainWindow", "Id"))
 
 
 if __name__ == "__main__":

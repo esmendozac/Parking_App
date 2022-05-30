@@ -19,7 +19,7 @@ class ParkingApi:
             if r.status_code == 200:
                 return Usuario(r.json())
         except:
-            ex = "Error al consultar usuario -> HttpResponsed: " + r.status_code
+            ex = "Error al consultar usuario -> Http_response: " + r.status_code
             raise Exception(ex)
 
     def create_parking(self, parking):
@@ -32,7 +32,18 @@ class ParkingApi:
             return r.status_code == 200
 
         except:
-            ex = "Error al crear el lote -> HttpResponsed: " + r.status_code
+            ex = "Error al crear el lote -> Http_response: " + r.status_code
             raise Exception(ex)
+
+    def get_parking(self, parking_id):
+        try:
+            r = requests.get(self.base_api + f'ConsultarLote/{parking_id}')
+
+            if r.status_code == 200:
+                return r.json()
+        except:
+            ex = "Error al consultar el lote -> Http_response: " + r.status_code
+            raise Exception(ex)
+
 
 
