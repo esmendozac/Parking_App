@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import copy
 import json
+import re
 import math
 from enum import Enum
 
@@ -40,6 +41,7 @@ class SpaceConfig:
         self.draw_widget(row, col, widget_id)
         self.generate_spaces()
         self.json_info = {}
+
 
         # Conexiones fijas
         self.ui.btn_save_json.clicked.connect(lambda callback: self.save_json_file())
@@ -146,7 +148,7 @@ class SpaceConfig:
                 approx = cv2.approxPolyDP(c, epsilon, True)
 
                 moment = cv2.moments(c)
-                centrer_x = int(moment["m10"] / moment["m00"])
+                center_x = int(moment["m10"] / moment["m00"])
                 center_y = int(moment["m01"] / moment["m00"])
 
                 index += 1
@@ -155,22 +157,46 @@ class SpaceConfig:
                 cv2.drawContours(image=initial_image, contours=[approx], thickness=2, color=(0, 255, 0),
                                  lineType=cv2.LINE_AA, contourIdx=-1)
                 # Texto que enumera el espacio
-                cv2.putText(initial_image, f"{index}", (centrer_x - 20, center_y - 20),
+                cv2.putText(initial_image, f"{index}", (center_x - 20, center_y - 20),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
                 print(f'Puntos: {len(approx)}, approx: {str(approx[0][0])}')
-                ds = DefinedSpace(approx, True, "Normal space", index)
+                ds = DefinedSpace(approx, True, "normal", index, [center_x, center_y])
                 self.lot.add_defined_space(ds)
 
-            cv2.imshow(f'{self.widget_id}_Espacios delimitados...', initial_image)
+            cv2.imshow(f'{self.widget_id}_Configuracion...', initial_image)
             # cv2.imshow(f'{self.widget_id}_Mascara...', original_bin)
 
             # Habilita botón
             self.ui.btn_save_json.setDisabled(False)
             print(self.lot.serialize())
 
+            # Habilita edición
+            cv2.setMouseCallback(f'{self.widget_id}_Configuracion...', self.mouse_callback)
+
         except Exception as ex:
             raise Exception(ex)
+
+    def mouse_callback(self, event, x, y, flags, param):
+
+        if event == cv2.EVENT_LBUTTONDBLCLK:
+
+            # Extrae la imagen inicial
+            initial_image = Ut.get_original_image_content()
+
+            # Verifica en que espacio señaló
+            for ds in self.lot.EspaciosDelimitados:
+                cont, color = ds.change_state(x, y)
+
+                # Calcula el centro
+
+                cv2.putText(initial_image, f"{ds.Indice}", (ds.Centro[0] - 20, ds.Centro[1] - 20),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+
+                cv2.drawContours(image=initial_image, contours=cont, thickness=2, color=color,
+                                     lineType=cv2.LINE_AA, contourIdx=-1)
+
+            cv2.imshow(f'{self.widget_id}_Configuracion...', initial_image)
 
     def save_json_file(self):
         """

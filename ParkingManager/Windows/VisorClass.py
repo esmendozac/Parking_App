@@ -57,7 +57,8 @@ class Visor:
     def timer_evaluar_modelo(self):
 
         PRED_IMAGE_SIZE = 224
-        CLASES = ['DISCAPACITADO', 'LIBRE', 'OCUPADO']
+        # CLASES = ['DISCAPACITADO', 'LIBRE', 'OCUPADO']
+        CLASES = ['LIBRE', 'OCUPADO']
 
         while True:
             time.sleep(1)
@@ -131,7 +132,8 @@ class Visor:
         OBS_CAMERA_WIDTH = 1920
         OBS_CAMERA_HEIGHT = 1080
         AREA_MINIMA = 50
-        MODEL = "C:/Users/R5 3400/Desktop/Generador imagenes/18CDSClean14OriginalDatosVariados.h5"
+        # MODEL = "C:/Users/R5 3400/Desktop/Generador imagenes/18CDSClean14OriginalDatosVariados.h5"
+        MODEL = "C:/Users/R5 3400/Desktop/Generador imagenes/51DSDosClases_DPCategN.h5"
         JSON_FILE = 'C:/Users/R5 3400/Desktop/Generador imagenes/14.json'
 
         self.evalua_modelo_flag: bool = False
@@ -205,14 +207,22 @@ class Visor:
 
                 if "label" in space:
                     if space["label"] == 'LIBRE':
-                        cv2.drawContours(image=self.frame, contours=space["contour"], thickness=2, color=(0, 255, 0),
-                                         lineType=cv2.LINE_AA, contourIdx=-1)
+
+                        # Consulta el tipo de espacio para deteminar el color
+                        if space["Tipo"] == 'normal':
+                            cv2.drawContours(image=self.frame, contours=space["contour"], thickness=2,
+                                            color=(0, 255, 0),
+                                            lineType=cv2.LINE_AA, contourIdx=-1)
+                        elif space["Tipo"] == 'discapacitado':
+                            cv2.drawContours(image=self.frame, contours=space["contour"], thickness=2,
+                                             color=(255, 0, 0),
+                                             lineType=cv2.LINE_AA, contourIdx=-1)
                     elif space["label"] == 'OCUPADO':
                         cv2.drawContours(image=self.frame, contours=space["contour"], thickness=2, color=(0, 0, 255),
                                          lineType=cv2.LINE_AA, contourIdx=-1)
-                    elif space["label"] == 'DISCAPACITADO':
-                        cv2.drawContours(image=self.frame, contours=space["contour"], thickness=2, color=(255, 0, 0),
-                                         lineType=cv2.LINE_AA, contourIdx=-1)
+                    # elif space["label"] == 'DISCAPACITADO':
+                    #     cv2.drawContours(image=self.frame, contours=space["contour"], thickness=2, color=(255, 0, 0),
+                    #                      lineType=cv2.LINE_AA, contourIdx=-1)
 
                         # cv2.drawContours(frame, [area_pts], -1, color, 2)
             cv2.putText(self.frame, texto_estado, (10, 30),
