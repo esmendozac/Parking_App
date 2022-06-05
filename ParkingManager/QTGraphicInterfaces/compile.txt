@@ -10,4 +10,4 @@ python -m PyQt5.uic.pyuic -x QTGraphicInterfaces/DynamicMainInterfaceForm.ui -o 
 
 python -m PyQt5.uic.pyuic -x QTGraphicInterfaces/MainMenu.ui -o QTGraphicInterfaces/MainMenu.py
 
-python -m PyQt5.uic.pyuic -x QTGraphicInterfaces/UiMainMenu.ui -o QTGraphicInterfaces/UiMainMenu.py
+python -m PyQt5.uic.pyuic -x QTGraphicInterfaces/Editor.ui -o QTGraphicInterfaces/Editor.py

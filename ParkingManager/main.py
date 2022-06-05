@@ -6,7 +6,7 @@ from QTGraphicInterfaces.UiMainMenu import Ui_Manager
 
 # Ventanas
 from Windows.Editor import Editor
-from Windows.VisorClass import Visor
+from Windows.Visor import Visor
 # Comunicación
 from Integration.ParkingApi import ParkingApi
 
@@ -36,7 +36,6 @@ class Maqueta(QtWidgets.QMainWindow):
     def draw_widget(self,  lote: dict):
 
         id = lote["IdLote"]
-
         lot_frame = QtWidgets.QFrame(self.ui.scroll_area_widget_contents)
         lot_frame.setMinimumSize(QtCore.QSize(100, 40))
         lot_frame.setStyleSheet("QFrame{\n"
