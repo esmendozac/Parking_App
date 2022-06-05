@@ -45,5 +45,27 @@ class ParkingApi:
             ex = "Error al consultar el lote -> Http_response: " + r.status_code
             raise Exception(ex)
 
+    def get_parkings(self):
+        try:
+            r = requests.get(self.base_api + f'ConsultarLotes')
 
+            if r.status_code == 200:
+                return r.json()
+        except:
+            ex = "Error al consultar los lotes -> Http_response: " + r.status_code
+            raise Exception(ex)
 
+    def delete_parking(self, parking_id):
+        try:
+
+            print(parking_id)
+
+            r = requests.delete(self.base_api + f'EliminarLote/{parking_id}')
+
+            if r.status_code == 200:
+                return True
+            else:
+                return False
+        except:
+            ex = "Error al eliminar el lote -> Http_response: " + r.status_code
+            raise Exception(ex)
