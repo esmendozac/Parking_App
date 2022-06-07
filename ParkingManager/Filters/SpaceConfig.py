@@ -42,7 +42,6 @@ class SpaceConfig:
         self.generate_spaces()
         self.json_info = {}
 
-
         # Conexiones fijas
         self.ui.btn_save_json.clicked.connect(lambda callback: self.save_json_file())
 
@@ -222,7 +221,13 @@ class SpaceConfig:
     def save_json_data(self):
 
         api = ParkingApi()
-        api.create_parking(self.lot.get_dict())
+        lot = api.create_parking(self.lot.get_dict())
+
+        # Crea el lote en la ventana principal
+        self.context.add_lot_in_main(lot)
+        print(lot)
+
+        self.context.close()
 
     def set_original_picture(self, picture):
         self._original_picture = copy.deepcopy(picture)

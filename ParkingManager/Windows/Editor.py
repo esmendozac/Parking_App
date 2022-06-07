@@ -21,14 +21,14 @@ class Editor(QtWidgets.QMainWindow):
 
     # endregion
 
-    def __init__(self):
+    def __init__(self, main_context):
         """
             Constructor donde se inicializan parámetros de interfaz gráfica
         """
-
         super(Editor, self).__init__()
         self.ui = Ui_Editor()
         self.ui.setupUi(self)
+        self.main_context = main_context
         # Asignaciones iniciales
         self.disable_all_buttons(True)
         # Botón de almacenamiento de archivo
@@ -146,8 +146,12 @@ class Editor(QtWidgets.QMainWindow):
         self.ui.btn_search.setDisabled(state)
         self.ui.btn_perspective.setDisabled(state)
 
+    def add_lot_in_main(self, lot):
+        self.main_context.add_lot(lot)
+
     def set_original_picture(self, picture):
         self._original_picture = copy.deepcopy(picture)
 
     def get_original_picture(self):
         return copy.deepcopy(self._original_picture)
+

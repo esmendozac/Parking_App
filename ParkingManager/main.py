@@ -146,9 +146,11 @@ class Maqueta(QtWidgets.QMainWindow):
         else:
             return
 
-    @staticmethod
-    def open_editor():
-        app_editor = Editor()
+    def add_lot(self, lot: object):
+        self.draw_widget(lot)
+
+    def open_editor(self):
+        app_editor = Editor(self)
         app_editor.show()
 
 

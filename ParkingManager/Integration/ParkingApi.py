@@ -29,8 +29,10 @@ class ParkingApi:
 
             r = requests.post(self.base_api + f'CrearLote', data=json.dumps(parking), headers=headers)
 
-            return r.status_code == 200
-
+            if r.status_code == 201:
+                return r.json()
+            else:
+                raise Exception()
         except:
             ex = "Error al crear el lote -> Http_response: " + r.status_code
             raise Exception(ex)
