@@ -20,9 +20,9 @@ class DefinedSpace:
 
         self.Indice = index
         self.IdEspacioDelimitado: int = 0
+        self.IdLote: int = 0
         self.Habilitado: bool = enabled
         self.Tipo: str = space_type
-        self.IdCalibracion: int = 0
         self.Centro = center
 
     @staticmethod

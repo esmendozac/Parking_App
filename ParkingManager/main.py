@@ -6,7 +6,9 @@ from QTGraphicInterfaces.UiMainMenu import Ui_Manager
 
 # Ventanas
 from Windows.Editor import Editor
+from Windows.Editor import Modes
 from Windows.Visor import Visor
+from Windows.Transactions import Transaction
 # Comunicación
 from Integration.ParkingApi import ParkingApi
 
@@ -31,7 +33,7 @@ class Maqueta(QtWidgets.QMainWindow):
             self.draw_widget(lot)
 
         # Conexiones
-        self.ui.btn_create.clicked.connect(self.open_editor)
+        self.ui.btn_create.clicked.connect(lambda callback: self.open_editor(Modes.Creator, 0))
 
     def draw_widget(self,  lote: dict):
 
@@ -82,6 +84,21 @@ class Maqueta(QtWidgets.QMainWindow):
         lbl_lot_name_spacer_item = QtWidgets.QSpacerItem(227, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         ly_lot.addItem(lbl_lot_name_spacer_item)
 
+        btn_transactions_interface = QtWidgets.QPushButton(lot_frame)
+        btn_transactions_interface.setText("")
+        btn_transactions_icon = QtGui.QIcon()
+        btn_transactions_icon.addPixmap(QtGui.QPixmap("QTGraphicInterfaces/Icons/car-solid.svg"), QtGui.QIcon.Normal,
+                                         QtGui.QIcon.Off)
+        btn_transactions_interface.setIcon(btn_transactions_icon)
+        btn_transactions_interface.setObjectName(f"btn_transactions_interface_{id}")
+        ly_lot.addWidget(btn_transactions_interface)
+
+        line_separator = QtWidgets.QFrame(lot_frame)
+        line_separator.setFrameShape(QtWidgets.QFrame.VLine)
+        line_separator.setFrameShadow(QtWidgets.QFrame.Sunken)
+        line_separator.setObjectName(f"line_separator_{id}")
+        ly_lot.addWidget(line_separator)
+
         btn_lot_view = QtWidgets.QPushButton(lot_frame)
         btn_lot_view.setText("")
         btn_lot_view_icon = QtGui.QIcon()
@@ -124,7 +141,9 @@ class Maqueta(QtWidgets.QMainWindow):
 
         # Eventos dinámicos de los botones
         btn_lot_view.clicked.connect(lambda callback: self.view_lot(id))
+        btn_lot_edit.clicked.connect(lambda callback: self.open_editor(Modes.Editor, id))
         btn_lot_delete.clicked.connect(lambda callback: self.delete_lot(id))
+        btn_transactions_interface.clicked.connect(lambda callback: self.open_transactions_interface(id))
 
     def view_lot(self, parking_id):
 
@@ -149,9 +168,13 @@ class Maqueta(QtWidgets.QMainWindow):
     def add_lot(self, lot: object):
         self.draw_widget(lot)
 
-    def open_editor(self):
-        app_editor = Editor(self)
+    def open_editor(self, mode: Modes, parking_id):
+        app_editor = Editor(self, mode, parking_id)
         app_editor.show()
+
+    def open_transactions_interface(self, parking_id):
+        self.app_transactions = Transaction(self, parking_id)
+        self.app_transactions.show()
 
 
 app = QtWidgets.QApplication([])

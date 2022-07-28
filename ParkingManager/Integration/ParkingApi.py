@@ -71,3 +71,18 @@ class ParkingApi:
         except:
             ex = "Error al eliminar el lote -> Http_response: " + r.status_code
             raise Exception(ex)
+
+    def update_parking(self, parking):
+
+        try:
+            headers = {'Content-type': 'application/json'}
+
+            r = requests.post(self.base_api + f'ActualizarLote', data=json.dumps(parking), headers=headers)
+
+            if r.status_code == 200:
+                return r.json()
+            else:
+                raise Exception()
+        except:
+            ex = "Error al actualizar el lote -> Http_response: " + r.status_code
+            raise Exception(ex)

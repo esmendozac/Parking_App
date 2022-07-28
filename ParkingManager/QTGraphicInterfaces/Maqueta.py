@@ -101,77 +101,89 @@ class Ui_Manager(object):
         self.scroll_area_widget_contents.setObjectName("scroll_area_widget_contents")
         self.ly_lots = QtWidgets.QFormLayout(self.scroll_area_widget_contents)
         self.ly_lots.setObjectName("ly_lots")
-#         self.lot_frame = QtWidgets.QFrame(self.scroll_area_widget_contents)
-#         self.lot_frame.setMinimumSize(QtCore.QSize(100, 40))
-#         self.lot_frame.setStyleSheet("QFrame{\n"
-# "    border:1px solid #4a26fd;\n"
-# "    border-radius: 10px;\n"
-# "}\n"
-# "\n"
-# "QPushButton{\n"
-# "    background-color: #ffffff;\n"
-# "    border-radius:5px;\n"
-# "    border: 1px solid  #ffffff\n"
-# "\n"
-# "}\n"
-# "\n"
-# "QPushButton:Hover{    \n"
-# "    border: 1px solid  #4a26fd;\n"
-# "}")
-#         self.lot_frame.setFrameShape(QtWidgets.QFrame.NoFrame)
-#         self.lot_frame.setFrameShadow(QtWidgets.QFrame.Raised)
-#         self.lot_frame.setObjectName("lot_frame")
-#         self.ly_lot = QtWidgets.QHBoxLayout(self.lot_frame)
-#         self.ly_lot.setObjectName("ly_lot")
-#         self.lbl_lot_id = QtWidgets.QLabel(self.lot_frame)
-#         font = QtGui.QFont()
-#         font.setFamily("FontAwesome")
-#         font.setPointSize(13)
-#         self.lbl_lot_id.setFont(font)
-#         self.lbl_lot_id.setStyleSheet("border:none")
-#         self.lbl_lot_id.setObjectName("lbl_lot_id")
-#         self.ly_lot.addWidget(self.lbl_lot_id)
-#         spacerItem1 = QtWidgets.QSpacerItem(30, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-#         self.ly_lot.addItem(spacerItem1)
-#         self.lbl_lot_name = QtWidgets.QLabel(self.lot_frame)
-#         font = QtGui.QFont()
-#         font.setFamily("FontAwesome")
-#         font.setPointSize(13)
-#         self.lbl_lot_name.setFont(font)
-#         self.lbl_lot_name.setStyleSheet("border:none")
-#         self.lbl_lot_name.setObjectName("lbl_lot_name")
-#         self.ly_lot.addWidget(self.lbl_lot_name)
-#         spacerItem2 = QtWidgets.QSpacerItem(227, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-#         self.ly_lot.addItem(spacerItem2)
-#         self.btn_lot_view = QtWidgets.QPushButton(self.lot_frame)
-#         self.btn_lot_view.setText("")
-#         icon2 = QtGui.QIcon()
-#         icon2.addPixmap(QtGui.QPixmap("Icons/eye-solid.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-#         self.btn_lot_view.setIcon(icon2)
-#         self.btn_lot_view.setObjectName("btn_lot_view")
-#         self.ly_lot.addWidget(self.btn_lot_view)
-#         self.btn_lot_edit = QtWidgets.QPushButton(self.lot_frame)
-#         self.btn_lot_edit.setText("")
-#         icon3 = QtGui.QIcon()
-#         icon3.addPixmap(QtGui.QPixmap("Icons/pen-to-square-solid.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-#         self.btn_lot_edit.setIcon(icon3)
-#         self.btn_lot_edit.setObjectName("btn_lot_edit")
-#         self.ly_lot.addWidget(self.btn_lot_edit)
-#         self.btn_lot_stats = QtWidgets.QPushButton(self.lot_frame)
-#         self.btn_lot_stats.setText("")
-#         icon4 = QtGui.QIcon()
-#         icon4.addPixmap(QtGui.QPixmap("Icons/chart-line-solid.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-#         self.btn_lot_stats.setIcon(icon4)
-#         self.btn_lot_stats.setObjectName("btn_lot_stats")
-#         self.ly_lot.addWidget(self.btn_lot_stats)
-#         self.btn_lot_delete = QtWidgets.QPushButton(self.lot_frame)
-#         self.btn_lot_delete.setText("")
-#         icon5 = QtGui.QIcon()
-#         icon5.addPixmap(QtGui.QPixmap("Icons/trash-solid.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-#         self.btn_lot_delete.setIcon(icon5)
-#         self.btn_lot_delete.setObjectName("btn_lot_delete")
-#         self.ly_lot.addWidget(self.btn_lot_delete)
-#         self.ly_lots.setWidget(0, QtWidgets.QFormLayout.SpanningRole, self.lot_frame)
+        self.lot_frame = QtWidgets.QFrame(self.scroll_area_widget_contents)
+        self.lot_frame.setMinimumSize(QtCore.QSize(100, 40))
+        self.lot_frame.setStyleSheet("QFrame{\n"
+"    border:1px solid #4a26fd;\n"
+"    border-radius: 10px;\n"
+"}\n"
+"\n"
+"QPushButton{\n"
+"    background-color: #ffffff;\n"
+"    border-radius:5px;\n"
+"    border: 1px solid  #ffffff\n"
+"\n"
+"}\n"
+"\n"
+"QPushButton:Hover{    \n"
+"    border: 1px solid  #4a26fd;\n"
+"}")
+        self.lot_frame.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.lot_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.lot_frame.setObjectName("lot_frame")
+        self.ly_lot = QtWidgets.QHBoxLayout(self.lot_frame)
+        self.ly_lot.setObjectName("ly_lot")
+        self.lbl_lot_id = QtWidgets.QLabel(self.lot_frame)
+        font = QtGui.QFont()
+        font.setFamily("FontAwesome")
+        font.setPointSize(13)
+        self.lbl_lot_id.setFont(font)
+        self.lbl_lot_id.setStyleSheet("border:none")
+        self.lbl_lot_id.setObjectName("lbl_lot_id")
+        self.ly_lot.addWidget(self.lbl_lot_id)
+        spacerItem1 = QtWidgets.QSpacerItem(30, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.ly_lot.addItem(spacerItem1)
+        self.lbl_lot_name = QtWidgets.QLabel(self.lot_frame)
+        font = QtGui.QFont()
+        font.setFamily("FontAwesome")
+        font.setPointSize(13)
+        self.lbl_lot_name.setFont(font)
+        self.lbl_lot_name.setStyleSheet("border:none")
+        self.lbl_lot_name.setObjectName("lbl_lot_name")
+        self.ly_lot.addWidget(self.lbl_lot_name)
+        spacerItem2 = QtWidgets.QSpacerItem(100, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.ly_lot.addItem(spacerItem2)
+        self.btn_car_interface = QtWidgets.QPushButton(self.lot_frame)
+        self.btn_car_interface.setText("")
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap("Icons/car-solid.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.btn_car_interface.setIcon(icon2)
+        self.btn_car_interface.setObjectName("btn_car_interface")
+        self.ly_lot.addWidget(self.btn_car_interface)
+        self.line_separator = QtWidgets.QFrame(self.lot_frame)
+        self.line_separator.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_separator.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_separator.setObjectName("line_separator")
+        self.ly_lot.addWidget(self.line_separator)
+        self.btn_lot_view = QtWidgets.QPushButton(self.lot_frame)
+        self.btn_lot_view.setText("")
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap("Icons/eye-solid.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.btn_lot_view.setIcon(icon3)
+        self.btn_lot_view.setObjectName("btn_lot_view")
+        self.ly_lot.addWidget(self.btn_lot_view)
+        self.btn_lot_edit = QtWidgets.QPushButton(self.lot_frame)
+        self.btn_lot_edit.setText("")
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap("Icons/pen-to-square-solid.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.btn_lot_edit.setIcon(icon4)
+        self.btn_lot_edit.setObjectName("btn_lot_edit")
+        self.ly_lot.addWidget(self.btn_lot_edit)
+        self.btn_lot_stats = QtWidgets.QPushButton(self.lot_frame)
+        self.btn_lot_stats.setText("")
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap("Icons/chart-line-solid.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.btn_lot_stats.setIcon(icon5)
+        self.btn_lot_stats.setObjectName("btn_lot_stats")
+        self.ly_lot.addWidget(self.btn_lot_stats)
+        self.btn_lot_delete = QtWidgets.QPushButton(self.lot_frame)
+        self.btn_lot_delete.setText("")
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap("Icons/trash-solid.svg"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.btn_lot_delete.setIcon(icon6)
+        self.btn_lot_delete.setObjectName("btn_lot_delete")
+        self.ly_lot.addWidget(self.btn_lot_delete)
+        self.ly_lots.setWidget(0, QtWidgets.QFormLayout.SpanningRole, self.lot_frame)
         self.scroll_area.setWidget(self.scroll_area_widget_contents)
         self.ly_main_frame.addWidget(self.scroll_area, 0, 0, 1, 1)
         self.ly_base_frame.addWidget(self.main_frame)
@@ -187,8 +199,8 @@ class Ui_Manager(object):
         _translate = QtCore.QCoreApplication.translate
         Manager.setWindowTitle(_translate("Manager", "MainWindow"))
         self.lbl_title.setText(_translate("Manager", "Parking Manager"))
-        # self.lbl_lot_id.setText(_translate("Manager", "1256"))
-        # self.lbl_lot_name.setText(_translate("Manager", "Parkway calle 35 City Parking"))
+        self.lbl_lot_id.setText(_translate("Manager", "1256"))
+        self.lbl_lot_name.setText(_translate("Manager", "Parkway calle 35 City Parking"))
 
 
 if __name__ == "__main__":

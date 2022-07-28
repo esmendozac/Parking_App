@@ -6,7 +6,7 @@ import re
 import math
 from enum import Enum
 
-
+import Windows.Editor
 from QTGraphicInterfaces.DynamicMainInterfaceForm import Ui_MainWindow as Ui
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QFileDialog
@@ -39,7 +39,12 @@ class SpaceConfig:
         self.context = context
         self.widget_id = widget_id
         self.draw_widget(row, col, widget_id)
-        self.generate_spaces()
+
+        if self.context.mode == Windows.Editor.Modes.Creator:
+            self.generate_spaces()
+        elif self.context.mode == Windows.Editor.Modes.Editor:
+            self.generate_spaces_for_edit()
+
         self.json_info = {}
 
         # Conexiones fijas
@@ -126,7 +131,75 @@ class SpaceConfig:
         ce_btn_start.setToolTip(_translate("MainWindow", "<html><head/><body><p>Dibujar coordenadas</p></body></html>"))
 
         self.ui.formLayout.setWidget(widget_id, QtWidgets.QFormLayout.FieldRole, ce_group)
-        ce_btn_start.clicked.connect(lambda callback: self.generate_spaces())
+
+        if self.context.mode == Windows.Editor.Modes.Creator:
+            ce_btn_start.clicked.connect(lambda callback: self.generate_spaces())
+        elif self.context.mode == Windows.Editor.Modes.Editor:
+            ce_btn_start.clicked.connect(lambda callback: self.generate_spaces_for_edit())
+
+    @staticmethod
+    def clean_coordinates(coord):
+        return re.sub("[^\w\s]", "", coord)
+
+    @staticmethod
+    def generate_numpy_coordinates(space):
+        coord1 = np.fromstring(SpaceConfig.clean_coordinates(space["Coord1"]), dtype=int, sep='  ')
+        coord2 = np.fromstring(SpaceConfig.clean_coordinates(space["Coord2"]), dtype=int, sep='  ')
+        coord3 = np.fromstring(SpaceConfig.clean_coordinates(space["Coord3"]), dtype=int, sep='  ')
+        coord4 = np.fromstring(SpaceConfig.clean_coordinates(space["Coord4"]), dtype=int, sep='  ')
+
+        return [coord1, coord2, coord3, coord4]
+
+    def generate_spaces_for_edit(self):
+
+        try:
+
+            # Extrae la imagen inicial
+            initial_image = Ut.get_original_image_content()
+
+            for space in self.context.parking["EspaciosDelimitados"]:
+                c = SpaceConfig.generate_numpy_coordinates(space)
+
+                contour = [
+                    np.array([[[c[0][0], c[0][1]]], [[c[1][0], c[1][1]]], [[c[2][0], c[2][1]]], [[c[3][0], c[3][1]]]],
+                             dtype=np.int32)]
+
+                color = (0, 255, 0)
+
+                if space["Tipo"] == 'discapacitado':
+                    color = (255, 0, 0)
+
+                # Dibuja el contorno por defecto
+                cv2.drawContours(image=initial_image, contours=contour, thickness=2, color=color,
+                                 lineType=cv2.LINE_AA, contourIdx=-1)
+
+                moment = cv2.moments(contour[0])
+                center_x = int(moment["m10"] / moment["m00"])
+                center_y = int(moment["m01"] / moment["m00"])
+
+                # Texto que enumera el espacio
+                cv2.putText(initial_image, f"{space['Indice']}", (center_x - 20, center_y - 20),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+
+                print(f'Puntos_: {len(contour[0])}, approx: {str(contour[0][0])}')
+
+                ds = DefinedSpace(contour[0], True, space["Tipo"], space['Indice'], [center_x, center_y])
+                ds.IdEspacioDelimitado = space["IdEspacioDelimitado"]
+                ds.IdLote = space["IdLote"]
+
+                self.lot.add_defined_space(ds)
+
+            cv2.imshow(f'{self.widget_id}_Configuracion...', initial_image)
+
+            # Habilita botón
+            self.ui.btn_save_json.setDisabled(False)
+            print(self.lot.serialize())
+
+            # Habilita edición
+            cv2.setMouseCallback(f'{self.widget_id}_Configuracion...', self.mouse_callback)
+
+        except Exception as ex:
+            raise Exception(ex)
 
     def generate_spaces(self):
 
@@ -164,7 +237,6 @@ class SpaceConfig:
                 self.lot.add_defined_space(ds)
 
             cv2.imshow(f'{self.widget_id}_Configuracion...', initial_image)
-            # cv2.imshow(f'{self.widget_id}_Mascara...', original_bin)
 
             # Habilita botón
             self.ui.btn_save_json.setDisabled(False)
@@ -210,6 +282,9 @@ class SpaceConfig:
         self.lot.update_property("Identificador", self.ui.txb_identifier.text())
         self.lot.update_property("Token", self.ui.txb_token.text())
         self.lot.update_property("Direccion", self.ui.txb_address.text())
+        self.lot.update_property("RutaModelo", self.ui.txb_model.text())
+        self.lot.update_property("FuenteVideo", self.ui.txb_video_source.text())
+
 
         with open(json_file_path, 'w') as fp:
             json.dump(self.lot.get_dict(), fp)
@@ -221,11 +296,15 @@ class SpaceConfig:
     def save_json_data(self):
 
         api = ParkingApi()
-        lot = api.create_parking(self.lot.get_dict())
 
-        # Crea el lote en la ventana principal
-        self.context.add_lot_in_main(lot)
-        print(lot)
+        if self.context.mode == Windows.Editor.Modes.Editor:
+            self.lot.update_property("IdLote", self.context.parking["IdLote"])
+            lot = api.update_parking(self.lot.get_dict())
+
+        elif self.context.mode == Windows.Editor.Modes.Creator:
+            lot = api.create_parking(self.lot.get_dict())
+            # Crea el lote en la ventana principal
+            self.context.add_lot_in_main(lot)
 
         self.context.close()
 

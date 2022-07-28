@@ -11,6 +11,8 @@ class Lote:
         self.Identificador = ""
         self.Token = ""
         self.Direccion = ""
+        self.FuenteVideo = ""
+        self.RutaModelo = ""
         self.EspaciosDelimitados: list = []
 
     def add_defined_space(self, defined_space: DefinedSpace):
@@ -39,6 +41,8 @@ class Lote:
             "Identificador": self.Identificador,
             "Token": self.Token,
             "Direccion": self.Direccion,
+            "FuenteVideo": self.FuenteVideo,
+            "RutaModelo": self.RutaModelo,
             "EspaciosDelimitados": []
         }
 

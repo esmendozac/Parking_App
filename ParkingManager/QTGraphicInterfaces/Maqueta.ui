@@ -307,11 +307,29 @@ QPushButton:Hover{
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
-                     <width>227</width>
+                     <width>100</width>
                      <height>20</height>
                     </size>
                    </property>
                   </spacer>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="btn_car_interface">
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset>
+                     <normaloff>Icons/car-solid.svg</normaloff>Icons/car-solid.svg</iconset>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="Line" name="line_separator">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                  </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="btn_lot_view">

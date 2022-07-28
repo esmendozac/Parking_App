@@ -1,6 +1,8 @@
 import json
 import cv2
 import copy
+from enum import Enum
+
 
 from PyQt5 import QtWidgets
 from QTGraphicInterfaces.Editor import Ui_Editor
@@ -12,6 +14,14 @@ from Filters.FactoryFilters import FactoryFilter as Ff
 from Filters.Delimite import Delimite as De
 from Models.Utils import Utils as Ut
 
+# Comunicaciones
+from Integration.ParkingApi import ParkingApi as api
+
+
+class Modes(Enum):
+    Creator = 0,
+    Editor = 1
+
 
 class Editor(QtWidgets.QMainWindow):
     # region Attributes
@@ -21,19 +31,26 @@ class Editor(QtWidgets.QMainWindow):
 
     # endregion
 
-    def __init__(self, main_context):
+    def __init__(self, main_context, mode, parking_id):
         """
             Constructor donde se inicializan parámetros de interfaz gráfica
         """
         super(Editor, self).__init__()
         self.ui = Ui_Editor()
         self.ui.setupUi(self)
+        self.api = api()
         self.main_context = main_context
         # Asignaciones iniciales
+        self.mode = mode
         self.disable_all_buttons(True)
         # Botón de almacenamiento de archivo
         self.ui.btn_save_json.setDisabled(False)
         self._original_picture = None
+        self.parking = {}
+
+        # Análisis de modo
+        if mode == Modes.Editor:
+            self.parking = self.get_parking(parking_id)
 
         # Conexiones
         self.ui.btn_load_image.clicked.connect(self.open_image)
@@ -140,11 +157,18 @@ class Editor(QtWidgets.QMainWindow):
         :param state:
         :return:
         """
-        self.ui.btn_delimite.setDisabled(state)
-        self.ui.btn_color.setDisabled(state)
-        self.ui.btn_transformation.setDisabled(state)
-        self.ui.btn_search.setDisabled(state)
-        self.ui.btn_perspective.setDisabled(state)
+        if self.mode == Modes.Creator:
+            self.ui.btn_delimite.setDisabled(state)
+            self.ui.btn_color.setDisabled(state)
+            self.ui.btn_transformation.setDisabled(state)
+            self.ui.btn_search.setDisabled(state)
+            self.ui.btn_perspective.setDisabled(state)
+        elif self.mode == Modes.Editor:
+            self.ui.btn_search.setDisabled(state)
+            self.ui.btn_delimite.setDisabled(True)
+            self.ui.btn_color.setDisabled(True)
+            self.ui.btn_transformation.setDisabled(True)
+            self.ui.btn_perspective.setDisabled(True)
 
     def add_lot_in_main(self, lot):
         self.main_context.add_lot(lot)
@@ -154,4 +178,17 @@ class Editor(QtWidgets.QMainWindow):
 
     def get_original_picture(self):
         return copy.deepcopy(self._original_picture)
+
+    def get_parking(self, parking_id):
+        data = self.api.get_parking(parking_id)
+
+        # Actualiza la información en los Textbox
+        self.ui.txb_name.setText(data["Nombre"])
+        self.ui.txb_identifier.setText(data["Identificador"])
+        self.ui.txb_token.setText(data["Token"])
+        self.ui.txb_address.setText(data["Direccion"])
+        self.ui.txb_model.setText(data["RutaModelo"])
+        self.ui.txb_video_source.setText(data["FuenteVideo"])
+
+        return data
 
