@@ -4,7 +4,7 @@ import json
 
 
 class ParkingApi:
-    base_api = "http://localhost:55774/api/"
+    base_api = "http://127.0.0.1/ParkingApi/api/"
 
     def get_user(self, userid) -> Usuario:
         """

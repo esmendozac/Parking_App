@@ -5,7 +5,7 @@ import json
 class IntegrationApi:
 
     def __init__(self):
-        self.base_api = "http://localhost:55774/api/"
+        self.base_api = "http://127.0.0.1/ParkingApi/api/"
         self.headers = {'Content-Type': 'application/json'}
 
     def set_header(self, key, value):
