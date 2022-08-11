@@ -38,9 +38,9 @@ class Transaction(QtWidgets.QMainWindow):
 
     def open_camera(self):
 
-        cap = cv2.VideoCapture(0)
-        # cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-        # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+        cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+        # cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1290)
+        # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
         while True:
             ret, frame = cap.read()
@@ -195,5 +195,6 @@ class Transaction(QtWidgets.QMainWindow):
             print("No se obtuvo un modelo válida")
 
         cv2.imshow('Perspectiva', transformed)
+
 
 
