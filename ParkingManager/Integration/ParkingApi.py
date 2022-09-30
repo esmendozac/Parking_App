@@ -86,3 +86,18 @@ class ParkingApi:
         except:
             ex = "Error al actualizar el lote -> Http_response: " + r.status_code
             raise Exception(ex)
+
+    def register_transaction(self, vehicle_transaction):
+
+        try:
+            headers = {'Content-type': 'application/json'}
+
+            r = requests.post(self.base_api + f'Transaccion', data=json.dumps(vehicle_transaction), headers=headers)
+
+            if r.status_code == 200 or r.status_code == 201:
+                return r.json()
+            else:
+                raise Exception()
+        except:
+            ex = "Error registrar la transacción  -> Http_response: " + r.status_code
+            raise Exception(ex)

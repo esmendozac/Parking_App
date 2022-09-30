@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import copy
 import math
+from random import random
 from enum import Enum
 from Models import Utils
 
@@ -250,8 +251,10 @@ class TPerspective:
 
     def get_lines(self, transformed, tolerance):
 
+        #cv2.imshow(f"Antes de Canny_th{int(random() *10000)}", transformed)
         # Aplica algoritmos de detección de bordes
         image_canny = cv2.Canny(transformed, 0, 100, 0)
+        #cv2.imshow(f"Canny_th{int(random() *10000)}", image_canny)
         lines = cv2.HoughLines(image_canny, 1, np.pi / 180, tolerance)
 
         verticals = []
@@ -296,6 +299,8 @@ class TPerspective:
 
                     verticals = sorted(verticals, key=lambda i: i['magnitude'])
                     horizontals = sorted(horizontals, key=lambda i: i['magnitude'])
+
+            #cv2.imshow(f"Hough_th{int(random() * 10000)}", transformed)
 
         return verticals, horizontals
 

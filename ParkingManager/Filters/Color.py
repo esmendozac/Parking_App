@@ -17,6 +17,8 @@ class Color(Filter):
 
     def __init__(self, picture, ui: Ui, row: int, col: int, widget_id: int):
 
+        print("Inicio constructor color")
+
         # Imagen original
         self._original_picture = None
         # Indica que el filtro fué finalizado

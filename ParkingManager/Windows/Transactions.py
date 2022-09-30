@@ -1,24 +1,20 @@
 import json
 import cv2
-import copy
-from enum import Enum
-import sys
 import numpy as np
 from math import dist
 import pytesseract
 import re
 
-
-from PyQt5 import QtWidgets
 from QTGraphicInterfaces.TransactionsInterface import Ui_TransactionInterface
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+# Comunicaciones
+from Integration.ParkingApi import ParkingApi as api
+#Modelos
+from Bussiness.Models.VehicleTransaction import VehicleTransaction
+from Windows.TransactionsForm import TransactionsForm
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 custom_config = r'--psm 6 '
-
-# Comunicaciones
-from Integration.ParkingApi import ParkingApi as api
 
 
 class Transaction(QtWidgets.QMainWindow):
@@ -31,10 +27,11 @@ class Transaction(QtWidgets.QMainWindow):
         self.ui = Ui_TransactionInterface()
         self.ui.setupUi(self)
         self.api = api()
+        self.parking_id = parking_id
         self.main_context = main_context
-
         self.ui.txb_resume.setPlainText("")
         self.ui.btn_open_camera.clicked.connect(lambda callback: self.open_camera())
+        self.ui.btn_open_keyboard.clicked.connect(lambda callback: self.open_transactions_form(None))
 
     def open_camera(self):
 
@@ -55,6 +52,9 @@ class Transaction(QtWidgets.QMainWindow):
 
         cap.release()
         cv2.destroyAllWindows()
+
+    def print_transaction(self, text):
+        self.ui.txb_resume.setPlainText(text)
 
     @staticmethod
     def sort_coordinates(coord_a, coord_b, coord_c, coord_d):
@@ -118,25 +118,44 @@ class Transaction(QtWidgets.QMainWindow):
 
         return sorted_list
 
+    @staticmethod
+    def save_image(name, image):
+
+        if True == True:
+            file_name = 'C:/Users/R5 3400/Desktop/imagenes proyecto/pasos/' + name + ".png"
+            cv2.imwrite(file_name, image)
+
     def process_card(self, frame):
 
+        Transaction.save_image('0 Original', frame)
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        Transaction.save_image('1 Blanco y negro', image)
         GB = cv2.GaussianBlur(image, (15, 15), 1)
+        Transaction.save_image('2 Gaussian blur', GB)
         GB = cv2.medianBlur(GB, 15)
+        Transaction.save_image('3 MedianBlur', GB)
         kernel = np.ones((10, 10), np.uint8)
         GB = cv2.morphologyEx(GB, cv2.MORPH_OPEN, kernel)
+        Transaction.save_image('4 Transf morfologica open', GB)
         kernelopening = np.ones((2, 2), np.uint8)
         # GB = cv2.erode(GB,kernel,iterations = 4)
         th3 = cv2.adaptiveThreshold(GB, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 2)
+        Transaction.save_image('5 Adaptative threshold', th3)
         th3 = cv2.morphologyEx(th3, cv2.MORPH_OPEN, kernelopening)
-        erosion = cv2.erode(th3, kernelopening, iterations=3)
-        th4 = cv2.morphologyEx(erosion, cv2.MORPH_GRADIENT, kernelopening)
+        Transaction.save_image('6 Transf morfologica open', th3)
+        # erosion = cv2.erode(th3, kernelopening, iterations=3)
+        # Transaction.save_image('7 Erosion', erosion)
+        # th4 = cv2.morphologyEx(erosion, cv2.MORPH_GRADIENT, kernelopening)
         # closing = cv2.morphologyEx(th3, cv2.MORPH_CLOSE, kernel)
-        kernel = np.ones((2, 2), np.uint8)
-        th4 = cv2.dilate(th4, kernel, iterations=2)
+        # kernel = np.ones((2, 2), np.uint8)
+        # th4 = cv2.dilate(th4, kernel, iterations=2)
         # erosion = cv2.erode(th3,kernel,iterations = 3)
         # GB = cv2.GaussianBlur(image, (5, 5), 1)
         contornos, hierachy = cv2.findContours(th3, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        frame_contornos = cv2.drawContours(frame, contornos, -1, (0, 255, 0), 3)
+        Transaction.save_image('7 contornos', frame_contornos)
+
         c = max(contornos, key=cv2.contourArea)
         x, y, w, h = cv2.boundingRect(c)
         epsilon = 0.01 * cv2.arcLength(c, True)
@@ -154,37 +173,49 @@ class Transaction(QtWidgets.QMainWindow):
         perspective_zone = np.float32([[0, 0], [800, 0], [0, 497], [800, 497]])
         m = cv2.getPerspectiveTransform(tc, perspective_zone)
         transformed = cv2.warpPerspective(frame, m, (800, 497))
+        Transaction.save_image('9 perspectiva', transformed)
+
         transformed = cv2.cvtColor(transformed, cv2.COLOR_BGR2GRAY)
 
         plate_img = transformed[141:220, 0:144]
         cv2.imshow("plate_img", plate_img)
+        Transaction.save_image('10 placa', plate_img)
         plate_text = pytesseract.image_to_string(plate_img, lang="spa", config=custom_config)
 
         cleaned_plate = re.findall('[A-Z]{3}[0-9]{3}|[A-Z]{3}[0-9]{2}[A-Z]{1}', plate_text)
 
+        vt = VehicleTransaction()
+        vt.IdLote = self.parking_id
+
         if len(cleaned_plate) >= 1:
             print(f"Plate: {cleaned_plate[0]}")
             self.ui.txb_resume.setPlainText(f"Placa: {cleaned_plate[0]}")
+            vt.Placa = cleaned_plate[0]
+
         else:
             print("No se obtuvo una placa válida")
             self.ui.txb_resume.setPlainText("No se obtuvo una placa válida")
 
         brand_img = transformed[142:217, 150:397]
+        Transaction.save_image('11 marca', brand_img)
         cv2.imshow("brand_img", brand_img)
         brand_text = pytesseract.image_to_string(brand_img, lang="spa", config=custom_config)
         print(f"brand_text:   {brand_text}")
 
         line_img = transformed[139:240, 395:585]
+        Transaction.save_image('12 linea', line_img)
         cv2.imshow("line_img", line_img)
         line_text = pytesseract.image_to_string(line_img, lang="spa", config=custom_config)
         print(f"line_text:   {line_text}")
 
         color_img = transformed[214:265, 150:400]
+        Transaction.save_image('13 Color', color_img)
         cv2.imshow("color_img", color_img)
         color_text = pytesseract.image_to_string(color_img, lang="spa", config=custom_config)
         print(f"color_text:   {color_text}")
 
         model_img = transformed[156:240, 672:796]
+        Transaction.save_image('14 Modelo', model_img)
         cv2.imshow("model_img", model_img)
         model_text = pytesseract.image_to_string(model_img, lang="spa", config=custom_config)
         cleaned_model = re.findall('[0-9]{4}', model_text)
@@ -196,5 +227,10 @@ class Transaction(QtWidgets.QMainWindow):
 
         cv2.imshow('Perspectiva', transformed)
 
+        if vt.Placa:
+            #self.register_transaction(vt)
+            self.open_transactions_form(vt)
 
-
+    def open_transactions_form(self, info):
+        self.form_transactions = TransactionsForm(self, info=info, parking_id=self.parking_id)
+        self.form_transactions.show()

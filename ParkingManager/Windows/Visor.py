@@ -128,7 +128,7 @@ class Visor:
     def __init__(self, data):
 
         # Constantes
-        OBS_CAMERA_ADDR = 1
+        OBS_CAMERA_ADDR = 2
         OBS_CAMERA_WIDTH = 1920
         OBS_CAMERA_HEIGHT = 1080
         AREA_MINIMA = 50
@@ -231,4 +231,3 @@ class Visor:
 
         cap.release()
         cv2.destroyAllWindows()
-
