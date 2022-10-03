@@ -5,8 +5,12 @@ from math import dist
 import pytesseract
 import re
 
-from QTGraphicInterfaces.TransactionsInterface import Ui_TransactionInterface
+
+from QTGraphicInterfaces.TransactionsInterfaceNew import Ui_TransactionInterfaceNew
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtPrintSupport import QPrinter, QPrintDialog
+from PyQt5.QtCore import QSizeF
+import Bussiness.Models.Runt as runt
 # Comunicaciones
 from Integration.ParkingApi import ParkingApi as api
 #Modelos
@@ -24,7 +28,7 @@ class Transaction(QtWidgets.QMainWindow):
             Constructor donde se inicializan parámetros de interfaz gráfica
         """
         super(Transaction, self).__init__()
-        self.ui = Ui_TransactionInterface()
+        self.ui = Ui_TransactionInterfaceNew()
         self.ui.setupUi(self)
         self.api = api()
         self.parking_id = parking_id
@@ -32,6 +36,7 @@ class Transaction(QtWidgets.QMainWindow):
         self.ui.txb_resume.setPlainText("")
         self.ui.btn_open_camera.clicked.connect(lambda callback: self.open_camera())
         self.ui.btn_open_keyboard.clicked.connect(lambda callback: self.open_transactions_form(None))
+        self.ui.btn_print.clicked.connect(lambda callback: self.print_file())
 
     def open_camera(self):
 
@@ -47,7 +52,7 @@ class Transaction(QtWidgets.QMainWindow):
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-            if cv2.waitKey(1) & 0xFF == ord('f'):
+            if cv2.waitKey(1) & 0xFF == ord('w'):
                 self.process_card(frame)
 
         cap.release()
@@ -178,8 +183,9 @@ class Transaction(QtWidgets.QMainWindow):
         transformed = cv2.cvtColor(transformed, cv2.COLOR_BGR2GRAY)
 
         plate_img = transformed[141:220, 0:144]
-        cv2.imshow("plate_img", plate_img)
-        Transaction.save_image('10 placa', plate_img)
+        #ret, plate_img = cv2.threshold(plate_img, 70, 255, cv2.THRESH_BINARY)
+
+        #cv2.imshow("plate_img", plate_img)
         plate_text = pytesseract.image_to_string(plate_img, lang="spa", config=custom_config)
 
         cleaned_plate = re.findall('[A-Z]{3}[0-9]{3}|[A-Z]{3}[0-9]{2}[A-Z]{1}', plate_text)
@@ -196,41 +202,81 @@ class Transaction(QtWidgets.QMainWindow):
             print("No se obtuvo una placa válida")
             self.ui.txb_resume.setPlainText("No se obtuvo una placa válida")
 
+        class_img = transformed[240:320, 6:240]
+        #ret, class_img = cv2.threshold(class_img, 70, 255, cv2.THRESH_BINARY)
+        #cv2.imshow("class_img", class_img)
+        class_text = pytesseract.image_to_string(class_img, lang="spa", config=custom_config)
+
+        class_cleaned = ""
+        for c in runt.classes:
+
+            if c in class_text:
+                class_cleaned = c
+        vt.Clase = class_cleaned
+        print(f"class_text:   {class_cleaned}")
+
         brand_img = transformed[142:217, 150:397]
-        Transaction.save_image('11 marca', brand_img)
-        cv2.imshow("brand_img", brand_img)
+        #ret, brand_img = cv2.threshold(brand_img, 70, 255, cv2.THRESH_BINARY)
+        #cv2.imshow("brand_img", brand_img)
         brand_text = pytesseract.image_to_string(brand_img, lang="spa", config=custom_config)
-        print(f"brand_text:   {brand_text}")
+
+        brand_cleaned = ""
+        for b in runt.brands:
+            if b in brand_text:
+                brand_cleaned = b
+                break
+        vt.Marca = brand_cleaned
+        print(f"brand_text:   {brand_cleaned}")
 
         line_img = transformed[139:240, 395:585]
-        Transaction.save_image('12 linea', line_img)
-        cv2.imshow("line_img", line_img)
+        #ret, line_img = cv2.threshold(line_img, 70, 255, cv2.THRESH_BINARY)
+        #cv2.imshow("line_img", line_img)
         line_text = pytesseract.image_to_string(line_img, lang="spa", config=custom_config)
+        vt.Linea = line_text
         print(f"line_text:   {line_text}")
 
         color_img = transformed[214:265, 150:400]
-        Transaction.save_image('13 Color', color_img)
-        cv2.imshow("color_img", color_img)
+        #ret, color_img = cv2.threshold(color_img, 70, 255, cv2.THRESH_BINARY)
+        #cv2.imshow("color_img", color_img)
         color_text = pytesseract.image_to_string(color_img, lang="spa", config=custom_config)
+        color_cleaned = ""
+        for cc in runt.colors:
+            if cc in color_text:
+                color_cleaned = cc
+                break
+
+        vt.Color = color_cleaned
         print(f"color_text:   {color_text}")
 
         model_img = transformed[156:240, 672:796]
-        Transaction.save_image('14 Modelo', model_img)
-        cv2.imshow("model_img", model_img)
+        #ret, model_img = cv2.threshold(model_img, 70, 255, cv2.THRESH_BINARY)
+        #cv2.imshow("model_img", model_img)
         model_text = pytesseract.image_to_string(model_img, lang="spa", config=custom_config)
-        cleaned_model = re.findall('[0-9]{4}', model_text)
-
-        if len(cleaned_model) >= 1:
-            print(f"Model: {cleaned_model[0]}")
-        else:
-            print("No se obtuvo un modelo válida")
+        model_cleaned = ""
+        for m in runt.models:
+            if m in model_text:
+                model_cleaned = m
+                break
+        vt.Modelo = model_cleaned
+        print(f"model_text:   {model_cleaned}")
 
         cv2.imshow('Perspectiva', transformed)
 
-        if vt.Placa:
-            #self.register_transaction(vt)
-            self.open_transactions_form(vt)
+        self.open_transactions_form(vt)
 
     def open_transactions_form(self, info):
         self.form_transactions = TransactionsForm(self, info=info, parking_id=self.parking_id)
         self.form_transactions.show()
+
+    def print_file(self):
+
+        printer = QPrinter()
+        printer.setPaperSize(QSizeF(300, 300), QPrinter.Millimeter)
+        printer.setPageMargins(10, 10, 10, 10, QPrinter.Millimeter)
+        printer.setFullPage(True)
+
+
+        dialog = QPrintDialog(printer, self)
+
+        if dialog.exec_() == dialog.Accepted:
+            self.ui.txb_resume.print(printer)

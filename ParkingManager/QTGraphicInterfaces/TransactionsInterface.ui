@@ -133,13 +133,7 @@ QPushButton:Hover{
         </font>
        </property>
        <property name="plainText">
-        <string>--------------------------------------------------------
- PARQUEADERO DE PRUEBAS
---------------------------------------------------------
-  PLACA : BPS75G
-  FECHA : 27/07/2022 16:50:00
-  TARIFA: $52
---------------------------------------------------------</string>
+        <string/>
        </property>
       </widget>
      </item>
