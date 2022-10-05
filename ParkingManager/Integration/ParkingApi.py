@@ -101,3 +101,25 @@ class ParkingApi:
         except:
             ex = "Error registrar la transacción  -> Http_response: " + r.status_code
             raise Exception(ex)
+
+    def register_monitoring(self, monitorings: list):
+
+        try:
+            headers = {'Content-type': 'application/json'}
+            r = requests.post(self.base_api + f'GuardarMonitoreos', data=json.dumps(monitorings), headers=headers)
+
+            if r.status_code not in [200, 201, 204]:
+                raise Exception()
+        except:
+            ex = "Error registrar el monitoreo  -> Http_response: " + r.status_code
+            raise Exception(ex)
+
+    def get_occupations(self, parking_id, date):
+        try:
+            r = requests.get(self.base_api + f'estadisticas/ocupaciones/{parking_id}/{date}')
+
+            if r.status_code == 200:
+                return r.json()
+        except:
+            ex = "Error al consultar los lotes -> Http_response: " + r.status_code
+            raise Exception(ex)

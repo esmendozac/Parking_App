@@ -275,7 +275,6 @@ class Transaction(QtWidgets.QMainWindow):
         printer.setPageMargins(10, 10, 10, 10, QPrinter.Millimeter)
         printer.setFullPage(True)
 
-
         dialog = QPrintDialog(printer, self)
 
         if dialog.exec_() == dialog.Accepted:

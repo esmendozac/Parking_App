@@ -10,6 +10,11 @@ from keras.models import load_model
 from datetime import datetime
 import copy
 
+# Comunicaciones
+from Integration.ParkingApi import ParkingApi as api
+
+# Modelos
+from Bussiness.Models.Monitoring import Monitoring
 
 class Visor:
 
@@ -59,6 +64,7 @@ class Visor:
         PRED_IMAGE_SIZE = 224
         # CLASES = ['DISCAPACITADO', 'LIBRE', 'OCUPADO']
         CLASES = ['LIBRE', 'OCUPADO']
+        CLASES_MONITOREO = [False, True]
 
         while True:
             time.sleep(1)
@@ -74,6 +80,8 @@ class Visor:
                 w = 200
 
                 if isinstance(self.frame, (np.ndarray, np.generic)):
+
+                    monitorings = []
 
                     for space in self.data["EspaciosDelimitados"]:
                         c = space["NumpyCoords"]
@@ -120,10 +128,21 @@ class Visor:
                         preds = self.modelo.predict(xt)
                         space["label"] = CLASES[np.argmax(preds)]
 
+                        # Monitoreos
+                        state = CLASES_MONITOREO[np.argmax(preds)]
+                        mon = Monitoring(space["IdEspacioDelimitado"], state, None)
+                        monitorings.append(mon.get_dict())
+
                         # Arma el contorno para dibujarlo
                         space["contour"] = [
                             np.array([[c[0][0], c[0][1]], [c[1][0], c[1][1]], [c[2][0], c[2][1]], [c[3][0], c[3][1]]],
                                      dtype=np.int32)]
+
+                    # Almacenar monitoreo
+                    try:
+                        self.api.register_monitoring(monitorings)
+                    except:
+                        print("No se pudo almacenar el monitoreo")
 
     def __init__(self, data):
 
@@ -141,6 +160,7 @@ class Visor:
         self.modelo = load_model(MODEL)
         self.frame = []
         self.clean_frame = []
+        self.api = api()
 
         # Captura de video
         cap = cv2.VideoCapture(OBS_CAMERA_ADDR)

@@ -9,6 +9,7 @@ from Windows.Editor import Editor
 from Windows.Editor import Modes
 from Windows.Visor import Visor
 from Windows.Transactions import Transaction
+from Windows.Stats import Stats
 # Comunicación
 from Integration.ParkingApi import ParkingApi
 
@@ -143,6 +144,7 @@ class Maqueta(QtWidgets.QMainWindow):
         btn_lot_view.clicked.connect(lambda callback: self.view_lot(id))
         btn_lot_edit.clicked.connect(lambda callback: self.open_editor(Modes.Editor, id))
         btn_lot_delete.clicked.connect(lambda callback: self.delete_lot(id))
+        btn_lot_stats.clicked.connect(lambda callback: self.open_stats_interface(id))
         btn_transactions_interface.clicked.connect(lambda callback: self.open_transactions_interface(id))
 
     def view_lot(self, parking_id):
@@ -169,12 +171,16 @@ class Maqueta(QtWidgets.QMainWindow):
         self.draw_widget(lot)
 
     def open_editor(self, mode: Modes, parking_id):
-        app_editor = Editor(self, mode, parking_id)
-        app_editor.show()
+        self.app_editor = Editor(self, mode, parking_id)
+        self.app_editor.show()
 
     def open_transactions_interface(self, parking_id):
         self.app_transactions = Transaction(self, parking_id)
         self.app_transactions.show()
+
+    def open_stats_interface(self, parking_id):
+        self.app_stats = Stats(self, parking_id)
+        self.app_stats.show()
 
 
 app = QtWidgets.QApplication([])
