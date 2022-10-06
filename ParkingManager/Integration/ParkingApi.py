@@ -121,5 +121,15 @@ class ParkingApi:
             if r.status_code == 200:
                 return r.json()
         except:
-            ex = "Error al consultar los lotes -> Http_response: " + r.status_code
+            ex = "Error al consultar las ocupaciones -> Http_response: " + r.status_code
+            raise Exception(ex)
+
+    def get_transactions(self, parking_id, date):
+        try:
+            r = requests.get(self.base_api + f'estadisticas/transacciones/{parking_id}/{date}')
+
+            if r.status_code == 200:
+                return r.json()
+        except:
+            ex = "Error al consultar las transacciones -> Http_response: " + r.status_code
             raise Exception(ex)

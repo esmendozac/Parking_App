@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_StatsWindow(object):
     def setupUi(self, StatsWindow):
         StatsWindow.setObjectName("StatsWindow")
-        StatsWindow.resize(793, 660)
+        StatsWindow.resize(785, 654)
         StatsWindow.setStyleSheet("QPushButton{\n"
 "    background-color: #4a26fd;\n"
 "    border-radius:5px;\n"
@@ -45,6 +45,7 @@ class Ui_StatsWindow(object):
         self.cbx_statistics = QtWidgets.QComboBox(self.verticalLayoutWidget_2)
         self.cbx_statistics.setObjectName("cbx_statistics")
         self.cbx_statistics.addItem("")
+        self.cbx_statistics.addItem("")
         self.vertical_layout_tools.addWidget(self.cbx_statistics)
         self.lbl_date = QtWidgets.QLabel(self.verticalLayoutWidget_2)
         self.lbl_date.setObjectName("lbl_date")
@@ -57,11 +58,19 @@ class Ui_StatsWindow(object):
         self.btn_query = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
         self.btn_query.setObjectName("btn_query")
         self.vertical_layout_tools.addWidget(self.btn_query)
-        self.plot_frame = QtWidgets.QFrame(self.main_frame)
-        self.plot_frame.setGeometry(QtCore.QRect(10, 130, 731, 471))
+        self.scrollArea = QtWidgets.QScrollArea(self.main_frame)
+        self.scrollArea.setGeometry(QtCore.QRect(9, 139, 731, 471))
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName("scrollArea")
+        self.scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 729, 469))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.plot_frame = QtWidgets.QFrame(self.scrollAreaWidgetContents)
+        self.plot_frame.setGeometry(QtCore.QRect(10, 10, 711, 451))
         self.plot_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.plot_frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.plot_frame.setObjectName("plot_frame")
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         StatsWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(StatsWindow)
         self.statusbar.setObjectName("statusbar")
@@ -75,6 +84,7 @@ class Ui_StatsWindow(object):
         StatsWindow.setWindowTitle(_translate("StatsWindow", "Estadísticas"))
         self.lbl_statistics.setText(_translate("StatsWindow", "Tipo de estadística"))
         self.cbx_statistics.setItemText(0, _translate("StatsWindow", "Ocupaciones por dia"))
+        self.cbx_statistics.setItemText(1, _translate("StatsWindow", "Transacciones por dia"))
         self.lbl_date.setText(_translate("StatsWindow", "Fecha"))
         self.txb_date.setDisplayFormat(_translate("StatsWindow", "dd/MM/yyyy"))
         self.btn_query.setText(_translate("StatsWindow", "Consultar"))
