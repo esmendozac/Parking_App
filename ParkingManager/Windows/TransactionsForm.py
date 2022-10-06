@@ -56,37 +56,44 @@ class TransactionsForm(QtWidgets.QMainWindow):
     def register_transaction(self, data):
 
         resume = self.api.register_transaction(data.get_dict())
-        # text = \
-        #     f"""
-        #    -----------------------------------------------------------
-        #        Entrada: {resume["FechaEntrada"]}
-        #        Salida:   {resume["FechaSalida"]}
-        #        Placa: {resume["Placa"]}
-        #        Tarifa por fracción: ${resume["TarifaFraccion"]}
-        #        Tarifa fija después de {resume["FraccionMinimaPrecioFijo"]} minutos : $ {resume["TarifaFija"]}
-        #        Tiempo: {resume["Tiempo"]} minutos
-        #        Valor: ${resume["Valor"]}
-        #    -----------------------------------------------------------
-        #    """
 
-        text = \
+        if resume["FechaSalida"] is None:
+            text = \
+    f"""
+-------------------------------
+    {resume["NombreLote"]}
+    {resume["DireccionLote"]}
+-------------------------------
+    Comprobante de entrada
+{resume["Guid"][0:30]}	
+
+  Entrada: {resume["FechaEntrada"]} 
+  Placa: {resume["Placa"]}
+  Tarifa por fracción: ${resume["TarifaFraccion"]}  
+-------------------------------
+    Tarifa especial {resume["FraccionMinimaPrecioFijo"]} min
+           $ {resume["TarifaFija"]} 
+-------------------------------
+        """
+        else:
+            text = \
         f"""
 -------------------------------
-      Nombre Parqueadero
-          Direccion
+    {resume["NombreLote"]}
+    {resume["DireccionLote"]}
 -------------------------------
-          Transaccion
-    220022023323203210320203	
+          Transacción
+{resume["Guid"][0:30]}	
 
-  Entrada: 2022-10-01 21:08:08
-  Salida: 2022-10-01 21:08:08
-  Placa: AGB123
-  Tarifa por fracción: $74.0	
-  Permanencia : 300
-  Valor: $6500
+  Entrada: {resume["FechaEntrada"]}
+  Salida: {resume["FechaSalida"]}
+  Placa: {resume["Placa"]}
+  Tarifa por fracción: ${resume["TarifaFraccion"]}
+  Permanencia : {resume["Tiempo"]} minutos
+  Valor: ${resume["Valor"]}
 -------------------------------
-    Tarifa especial 180.0 min
-           $ 6200.0
+    Tarifa especial {resume["FraccionMinimaPrecioFijo"]} min
+           $ {resume["TarifaFija"]}
   Tiene 15 minutos para salir
 El tiempo excedido genera cobro
     

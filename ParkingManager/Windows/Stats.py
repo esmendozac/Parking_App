@@ -69,8 +69,8 @@ class Stats(QtWidgets.QMainWindow):
                 self.tbl_transactions.setItem(row, 1, QtWidgets.QTableWidgetItem(d["Clase"]))
                 self.tbl_transactions.setItem(row, 2, QtWidgets.QTableWidgetItem(d["FechaEntrada"]))
                 self.tbl_transactions.setItem(row, 3, QtWidgets.QTableWidgetItem(d["FechaSalida"]))
-                self.tbl_transactions.setItem(row, 4, QtWidgets.QTableWidgetItem(str(d["Valor"])))
-                self.tbl_transactions.setItem(row, 5, QtWidgets.QTableWidgetItem(str(d["Tiempo"])))
+                self.tbl_transactions.setItem(row, 4, QtWidgets.QTableWidgetItem(str(d["Tiempo"])))
+                self.tbl_transactions.setItem(row, 5, QtWidgets.QTableWidgetItem(str(d["Valor"])))
                 self.tbl_transactions.setItem(row, 6, QtWidgets.QTableWidgetItem(d["Guid"]))
 
                 row += 1
@@ -127,10 +127,10 @@ class Stats(QtWidgets.QMainWindow):
         item.setText("Salida")
 
         item = self.tbl_transactions.horizontalHeaderItem(4)
-        item.setText("Tiempo")
+        item.setText("Tiempo (min)")
 
         item = self.tbl_transactions.horizontalHeaderItem(5)
-        item.setText("Valor")
+        item.setText("Valor ($)")
 
         item = self.tbl_transactions.horizontalHeaderItem(6)
         item.setText("Identificador")
