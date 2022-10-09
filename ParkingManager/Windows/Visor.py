@@ -152,7 +152,7 @@ class Visor:
         OBS_CAMERA_HEIGHT = 1080
         AREA_MINIMA = 50
         # MODEL = "C:/Users/R5 3400/Desktop/Generador imagenes/18CDSClean14OriginalDatosVariados.h5"
-        MODEL = "C:/Users/R5 3400/Desktop/Generador imagenes/51DSDosClases_DPCategN.h5"
+        MODEL = "C:/Users/Public/Documents/51DSDosClases_DPCategN.h5"
         JSON_FILE = 'C:/Users/R5 3400/Desktop/Generador imagenes/14.json'
 
         self.evalua_modelo_flag: bool = False

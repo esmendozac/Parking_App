@@ -127,27 +127,27 @@ class Transaction(QtWidgets.QMainWindow):
     def save_image(name, image):
 
         if True == True:
-            file_name = 'C:/Users/R5 3400/Desktop/imagenes proyecto/pasos/' + name + ".png"
+            #file_name = 'C:/Users/R5 3400/Desktop/imagenes proyecto/pasos/' + name + ".png"
             cv2.imwrite(file_name, image)
 
     def process_card(self, frame):
 
-        Transaction.save_image('0 Original', frame)
+        #Transaction.save_image('0 Original', frame)
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        Transaction.save_image('1 Blanco y negro', image)
+        #Transaction.save_image('1 Blanco y negro', image)
         GB = cv2.GaussianBlur(image, (15, 15), 1)
-        Transaction.save_image('2 Gaussian blur', GB)
+        #Transaction.save_image('2 Gaussian blur', GB)
         GB = cv2.medianBlur(GB, 15)
-        Transaction.save_image('3 MedianBlur', GB)
+        #Transaction.save_image('3 MedianBlur', GB)
         kernel = np.ones((10, 10), np.uint8)
         GB = cv2.morphologyEx(GB, cv2.MORPH_OPEN, kernel)
-        Transaction.save_image('4 Transf morfologica open', GB)
+        #Transaction.save_image('4 Transf morfologica open', GB)
         kernelopening = np.ones((2, 2), np.uint8)
         # GB = cv2.erode(GB,kernel,iterations = 4)
         th3 = cv2.adaptiveThreshold(GB, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 2)
-        Transaction.save_image('5 Adaptative threshold', th3)
+        #Transaction.save_image('5 Adaptative threshold', th3)
         th3 = cv2.morphologyEx(th3, cv2.MORPH_OPEN, kernelopening)
-        Transaction.save_image('6 Transf morfologica open', th3)
+        #Transaction.save_image('6 Transf morfologica open', th3)
         # erosion = cv2.erode(th3, kernelopening, iterations=3)
         # Transaction.save_image('7 Erosion', erosion)
         # th4 = cv2.morphologyEx(erosion, cv2.MORPH_GRADIENT, kernelopening)
@@ -159,7 +159,7 @@ class Transaction(QtWidgets.QMainWindow):
         contornos, hierachy = cv2.findContours(th3, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         frame_contornos = cv2.drawContours(frame, contornos, -1, (0, 255, 0), 3)
-        Transaction.save_image('7 contornos', frame_contornos)
+        #Transaction.save_image('7 contornos', frame_contornos)
 
         c = max(contornos, key=cv2.contourArea)
         x, y, w, h = cv2.boundingRect(c)
@@ -178,7 +178,7 @@ class Transaction(QtWidgets.QMainWindow):
         perspective_zone = np.float32([[0, 0], [800, 0], [0, 497], [800, 497]])
         m = cv2.getPerspectiveTransform(tc, perspective_zone)
         transformed = cv2.warpPerspective(frame, m, (800, 497))
-        Transaction.save_image('9 perspectiva', transformed)
+        #Transaction.save_image('9 perspectiva', transformed)
 
         transformed = cv2.cvtColor(transformed, cv2.COLOR_BGR2GRAY)
 
@@ -260,7 +260,7 @@ class Transaction(QtWidgets.QMainWindow):
         vt.Modelo = model_cleaned
         print(f"model_text:   {model_cleaned}")
 
-        cv2.imshow('Perspectiva', transformed)
+        #cv2.imshow('Perspectiva', transformed)
 
         self.open_transactions_form(vt)
 

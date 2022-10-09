@@ -402,7 +402,7 @@ class TPerspective:
         for line in lines:
             cv2.line(image, (line['x1'], line['y1']), (line['x2'], line['y2']), color, thickness)
 
-        cv2.imshow(f'{counter}_Nueva perspectiva', image)
+        #cv2.imshow(f'{counter}_Nueva perspectiva', image)
 
     def get_classified_lines_by_rho(self, lines: list, tolerance: int, image, is_horizontal: bool):
 
