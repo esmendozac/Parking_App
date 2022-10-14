@@ -2,15 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a8e980ff-1813-4172-9500-df894548c0d4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../.idea/Parking_App.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Filters/TPerspective.py" beforeDir="false" afterPath="$PROJECT_DIR$/Filters/TPerspective.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ParkingManager.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ParkingManager.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_6_10_2022_12_00_p__m__[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_6_10_2022_12_00_p__m___Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Windows/Stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/Windows/Stats.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Windows/Transactions.py" beforeDir="false" afterPath="$PROJECT_DIR$/Windows/Transactions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Windows/Visor.py" beforeDir="false" afterPath="$PROJECT_DIR$/Windows/Visor.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,11 +98,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Filters/Color.py</url>
-          <line>347</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Filters/Color.py</url>
           <line>327</line>

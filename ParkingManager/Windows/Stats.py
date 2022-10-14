@@ -49,9 +49,12 @@ class Stats(QtWidgets.QMainWindow):
 
             self.figure.clear()
             ax = self.figure.add_subplot(111)
-            ax.bar(x_axis, y_axis)
+            ax.bar(x_axis, y_axis, color = "darkred")
             plt.xlim([0, 23])
-            plt.xticks(np.arange(min(x_axis), max(x_axis) + 1, 1))
+            plt.xticks(np.arange(min(x_axis), max(x_axis) + 1, 1),fontsize=6)
+            plt.yticks(fontsize=8)
+            plt.xlabel("Hora", size=10, )
+            plt.ylabel("Espacios Ocupados", size=10)
             self.canvas.draw()
 
             self.vlw_table.hide()

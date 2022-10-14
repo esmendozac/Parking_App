@@ -134,10 +134,12 @@ class Transaction(QtWidgets.QMainWindow):
 
         #Transaction.save_image('0 Original', frame)
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        cv2.imshow("Imagen Capturada",image)
         #Transaction.save_image('1 Blanco y negro', image)
         GB = cv2.GaussianBlur(image, (15, 15), 1)
         #Transaction.save_image('2 Gaussian blur', GB)
         GB = cv2.medianBlur(GB, 15)
+        cv2.imshow("Imagen con Escala y Median", GB)
         #Transaction.save_image('3 MedianBlur', GB)
         kernel = np.ones((10, 10), np.uint8)
         GB = cv2.morphologyEx(GB, cv2.MORPH_OPEN, kernel)
@@ -145,6 +147,7 @@ class Transaction(QtWidgets.QMainWindow):
         kernelopening = np.ones((2, 2), np.uint8)
         # GB = cv2.erode(GB,kernel,iterations = 4)
         th3 = cv2.adaptiveThreshold(GB, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 2)
+        cv2.imshow("Binarización", th3)
         #Transaction.save_image('5 Adaptative threshold', th3)
         th3 = cv2.morphologyEx(th3, cv2.MORPH_OPEN, kernelopening)
         #Transaction.save_image('6 Transf morfologica open', th3)
@@ -159,6 +162,7 @@ class Transaction(QtWidgets.QMainWindow):
         contornos, hierachy = cv2.findContours(th3, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         frame_contornos = cv2.drawContours(frame, contornos, -1, (0, 255, 0), 3)
+        cv2.imshow("Frame Contornos", frame_contornos)
         #Transaction.save_image('7 contornos', frame_contornos)
 
         c = max(contornos, key=cv2.contourArea)
@@ -181,11 +185,11 @@ class Transaction(QtWidgets.QMainWindow):
         #Transaction.save_image('9 perspectiva', transformed)
 
         transformed = cv2.cvtColor(transformed, cv2.COLOR_BGR2GRAY)
-
+        cv2.imshow("TP", transformed)
         plate_img = transformed[141:220, 0:144]
         #ret, plate_img = cv2.threshold(plate_img, 70, 255, cv2.THRESH_BINARY)
 
-        #cv2.imshow("plate_img", plate_img)
+        cv2.imshow("plate_img", plate_img)
         plate_text = pytesseract.image_to_string(plate_img, lang="spa", config=custom_config)
 
         cleaned_plate = re.findall('[A-Z]{3}[0-9]{3}|[A-Z]{3}[0-9]{2}[A-Z]{1}', plate_text)
